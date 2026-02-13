@@ -3,34 +3,62 @@ import axios, {
   AxiosError,
   AxiosInstance,
   InternalAxiosRequestConfig,
+  AxiosResponse,
 } from "axios";
 
-// Konfigurasi base URL
+// ============================================
+// API CLIENT CONFIGURATION
+// ============================================
+
 const API_CONFIG = {
-  baseURL: process.env.NEXT_PUBLIC_API_GATEWAY_URL || "http://localhost:4000",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000",
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true, // Important: untuk mengirim httpOnly cookies
 };
 
-// Buat axios instance
+// Create axios instance
 export const apiClient: AxiosInstance = axios.create(API_CONFIG);
 
-// Request interceptor
+// Track if we're currently refreshing token
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value?: any) => void;
+  reject: (reason?: any) => void;
+}> = [];
+
+// Process queued requests after token refresh
+const processQueue = (error: Error | null, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
+
+// ============================================
+// REQUEST INTERCEPTOR
+// ============================================
+
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Tambahkan token jika ada
+    // Add access token to headers if available
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("accessToken");
       if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
 
-    // Log request di development
+    // Log request in development
     if (process.env.NODE_ENV === "development") {
-      console.log("🚀 Request:", {
+      console.log("🚀 API Request:", {
         method: config.method?.toUpperCase(),
         url: config.url,
         data: config.data,
@@ -44,12 +72,15 @@ apiClient.interceptors.request.use(
   },
 );
 
-// Response interceptor
+// ============================================
+// RESPONSE INTERCEPTOR
+// ============================================
+
 apiClient.interceptors.response.use(
-  (response) => {
-    // Log response di development
+  (response: AxiosResponse) => {
+    // Log response in development
     if (process.env.NODE_ENV === "development") {
-      console.log("✅ Response:", {
+      console.log("✅ API Response:", {
         status: response.status,
         data: response.data,
       });
@@ -61,56 +92,124 @@ apiClient.interceptors.response.use(
       _retry?: boolean;
     };
 
-    // Log error di development
+    // Log error in development
     if (process.env.NODE_ENV === "development") {
-      console.error("❌ Error:", {
+      console.error("❌ API Error:", {
         status: error.response?.status,
         message: error.message,
         data: error.response?.data,
       });
     }
 
-    // Handle 401 Unauthorized
+    // Handle 401 Unauthorized - Token expired
     if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // If already refreshing, queue this request
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            if (originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+            }
+            return apiClient(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
-        // Try refresh token
-        const refreshToken = localStorage.getItem("refreshToken");
-        if (refreshToken) {
-          const response = await axios.post(
-            `${API_CONFIG.baseURL}/api/auth/refresh`,
-            { refreshToken },
-          );
+        // Try to refresh token
+        const response = await axios.post(
+          `${API_CONFIG.baseURL}/api/auth/refresh-token`,
+          {},
+          {
+            withCredentials: true, // Send httpOnly cookie
+          },
+        );
 
-          const { token } = response.data.data;
-          localStorage.setItem("token", token);
+        const { accessToken } = response.data.data;
 
-          // Retry original request
-          if (originalRequest.headers) {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-          }
-          return apiClient(originalRequest);
-        }
-      } catch (refreshError) {
-        // Refresh failed, logout user
+        // Save new token
         if (typeof window !== "undefined") {
-          localStorage.removeItem("token");
-          localStorage.removeItem("refreshToken");
+          localStorage.setItem("accessToken", accessToken);
+        }
+
+        // Update authorization header
+        if (originalRequest.headers) {
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        }
+
+        // Process queued requests
+        processQueue(null, accessToken);
+
+        // Retry original request
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        // Refresh failed - logout user
+        processQueue(refreshError as Error, null);
+
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("accessToken");
           localStorage.removeItem("user");
+
+          // Redirect to login page
           window.location.href = "/login";
         }
+
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 
-    // Handle 503 Service Unavailable
-    if (error.response?.status === 503) {
+    // Handle 403 Forbidden
+    if (error.response?.status === 403) {
+      // User doesn't have permission
       return Promise.reject({
-        message: "Service temporarily unavailable. Please try again later.",
-        code: "SERVICE_UNAVAILABLE",
+        message: "Anda tidak memiliki akses untuk melakukan tindakan ini",
+        code: "FORBIDDEN",
       });
     }
 
+    // Handle 404 Not Found
+    if (error.response?.status === 404) {
+      return Promise.reject({
+        message: "Data tidak ditemukan",
+        code: "NOT_FOUND",
+      });
+    }
+
+    // Handle 422 Validation Error
+    if (error.response?.status === 422) {
+      return Promise.reject({
+        message: "Data yang dimasukkan tidak valid",
+        code: "VALIDATION_ERROR",
+        errors: error.response.data,
+      });
+    }
+
+    // Handle 500 Server Error
+    if (error.response?.status === 500) {
+      return Promise.reject({
+        message: "Terjadi kesalahan pada server. Silakan coba lagi nanti.",
+        code: "SERVER_ERROR",
+      });
+    }
+
+    // Handle Network Error
+    if (error.message === "Network Error") {
+      return Promise.reject({
+        message: "Koneksi bermasalah. Periksa koneksi internet Anda.",
+        code: "NETWORK_ERROR",
+      });
+    }
+
+    // Default error handling
     return Promise.reject(error);
   },
 );
