@@ -94,6 +94,7 @@ apiClient.interceptors.response.use(
 
     // Log error in development
     if (process.env.NODE_ENV === "development") {
+      console.log("Error", error);
       console.error("❌ API Error:", {
         status: error.response?.status,
         message: error.message,

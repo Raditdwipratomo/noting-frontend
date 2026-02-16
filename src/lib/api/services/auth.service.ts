@@ -7,13 +7,15 @@ import {
 } from "@/lib/types/auth.types";
 
 class AuthService {
-  private readonly basePath = "/api/auth";
+  private readonly basePath = `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/api/auth`;
 
   async register(data: RegisterRequest): Promise<AuthResponse> {
     const response = await apiClient.post<ApiResponse<AuthResponse>>(
       `${this.basePath}/register`,
       data,
     );
+
+    console.log("API", this.basePath);
 
     if (response.data.data?.accessToken) {
       this.setAccessToken(response.data.data.accessToken);
