@@ -1,12 +1,17 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
+import { useState, useEffect } from "react";
+import { TrendingUp, Loader2 } from "lucide-react";
+import { useAnak } from "@/contexts/AnakContext";
+import { pertumbuhanService } from "@/lib/api/services/pertumbuhan.service";
+import type { GrowthChartData } from "@/lib/types/pertumbuhan.types";
 import {
-  growthDataPoints,
-  trendInsight,
-} from "@/lib/data/pertumbuhan-data";
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -17,30 +22,84 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  ReferenceArea
+  Legend,
 } from "recharts";
 
 const tabs = ["TB/U", "BB/U"] as const;
 
 export default function GrowthChart() {
+  const { selectedAnak, selectedAnakId } = useAnak();
+  const [chartData, setChartData] = useState<GrowthChartData | null>(null);
   const [activeTab, setActiveTab] = useState<string>("TB/U");
+  const [loading, setLoading] = useState(false);
 
-  // Transform data to fit an ascending Y-axis (0-100)
-  // The original SVG used Y=0 at the top, so we invert it for Recharts
-  const chartData = growthDataPoints.map((p) => ({
-    name: p.month,
-    score: 100 - p.y,
+  useEffect(() => {
+    if (!selectedAnakId) return;
+    let cancelled = false;
+
+    const fetch = async () => {
+      setLoading(true);
+      try {
+        const data = await pertumbuhanService.getGrowthChart(selectedAnakId);
+        if (!cancelled) setChartData(data);
+      } catch {
+        if (!cancelled) setChartData(null);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    fetch();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedAnakId]);
+
+  if (loading) {
+    return (
+      <Card className="rounded-3xl shadow-sm border-gray-100 overflow-hidden bg-white">
+        <CardContent className="p-10 flex items-center justify-center">
+          <Loader2 size={32} className="animate-spin text-gray-400" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!chartData || chartData.labels.length === 0) {
+    return (
+      <Card className="rounded-3xl shadow-sm border-gray-100 overflow-hidden bg-white text-gray-800">
+        <CardContent className="p-10 flex flex-col items-center justify-center text-gray-400 gap-3">
+          <TrendingUp size={48} />
+          <span className="text-sm">Belum ada data pertumbuhan untuk ditampilkan</span>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Build recharts data from API response
+  const isTBMode = activeTab === "TB/U";
+  const datasetValues = isTBMode
+    ? chartData.datasets.tinggi_badan
+    : chartData.datasets.berat_badan;
+
+  const rechartsData = chartData.labels.map((label, idx) => ({
+    name: label,
+    value: datasetValues[idx] ?? 0,
   }));
 
-  // Tooltip formatter
+  const yUnit = isTBMode ? "cm" : "kg";
+  const childName = chartData.metadata?.nama_anak ?? selectedAnak?.nama_anak ?? "Anak";
+
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-2 border border-gray-100 shadow-sm rounded-lg text-xs z-50 relative">
           <p className="font-bold text-gray-700 mb-1">{label}</p>
           <div className="flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full bg-amber-500" />
-            <p className="text-amber-600 font-medium">Skor Z: {(payload[0].value / 20 - 3).toFixed(1)}</p>
+            <div className="w-2 h-2 rounded-full bg-primary" />
+            <p className="text-primary font-medium">
+              {payload[0].value} {yUnit}
+            </p>
           </div>
         </div>
       );
@@ -56,7 +115,8 @@ export default function GrowthChart() {
             Tren Pertumbuhan
           </CardTitle>
           <CardDescription className="text-sm text-gray-500">
-            Analisis Z-Score {activeTab} Berdasarkan Standar WHO
+            {isTBMode ? "Tinggi Badan" : "Berat Badan"} per Pengukuran —{" "}
+            {childName}
           </CardDescription>
         </div>
         <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
@@ -80,101 +140,69 @@ export default function GrowthChart() {
       </CardHeader>
 
       <CardContent className="p-6 pt-4">
-        {/* Chart */}
         <div className="relative w-full aspect-[16/7] min-h-[280px] bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
           <div className="absolute inset-0 pb-6 w-full h-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
-                data={chartData}
-                margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+                data={rechartsData}
+                margin={{ top: 20, right: 30, left: 10, bottom: 5 }}
               >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" opacity={0.6} />
-                <XAxis 
-                  dataKey="name" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fontSize: 10, fill: '#9ca3af', fontWeight: 'bold' }}
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#e5e7eb"
+                  opacity={0.6}
+                />
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{
+                    fontSize: 10,
+                    fill: "#9ca3af",
+                    fontWeight: "bold",
+                  }}
                   dy={10}
                 />
-                <YAxis 
-                  domain={[0, 100]} 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={false} 
-                  width={0}
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 10, fill: "#9ca3af" }}
+                  width={40}
+                  unit={` ${yUnit}`}
                 />
-                <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#facc15', strokeWidth: 1, strokeDasharray: '4 4' }} />
-                
-                {/* Normal Zone: Score 60 to 100 */}
-                <ReferenceArea y1={60} y2={100} fill="#ecfdf5" fillOpacity={0.7} />
-                
-                {/* Resiko Zone: Score 30 to 60 */}
-                <ReferenceArea y1={30} y2={60} fill="#fffbeb" fillOpacity={0.7} />
-                
-                {/* Stunting Zone: Score 0 to 30 */}
-                <ReferenceArea y1={0} y2={30} fill="#fff1f2" fillOpacity={0.7} />
-
+                <Tooltip content={<CustomTooltip />} />
                 <Line
                   type="monotone"
-                  dataKey="score"
-                  stroke="#F59E0B"
+                  dataKey="value"
+                  stroke="hsl(var(--primary))"
                   strokeWidth={2}
-                  dot={{ r: 4, fill: "white", stroke: "#F59E0B", strokeWidth: 2 }}
-                  activeDot={{ r: 6, fill: "#F59E0B", stroke: "white", strokeWidth: 2 }}
+                  dot={{
+                    r: 4,
+                    fill: "white",
+                    stroke: "hsl(var(--primary))",
+                    strokeWidth: 2,
+                  }}
+                  activeDot={{
+                    r: 6,
+                    fill: "hsl(var(--primary))",
+                    stroke: "white",
+                    strokeWidth: 2,
+                  }}
                   isAnimationActive={true}
                 />
               </LineChart>
             </ResponsiveContainer>
-          </div>
-
-          {/* Overlay labels for zones purely for aesthetics to match original exactly */}
-          <div className="absolute top-0 right-0 h-[calc(100%-30px)] w-full flex flex-col justify-between pointer-events-none">
-             <div className="h-[40%] flex items-center justify-end px-4">
-               <span className="text-[10px] font-bold text-emerald-600/60 uppercase tracking-widest hidden sm:inline-block">Normal (+2 ke -1 SD)</span>
-             </div>
-             <div className="h-[30%] flex items-center justify-end px-4 border-t border-amber-100/50">
-               <span className="text-[10px] font-bold text-amber-600/60 uppercase tracking-widest hidden sm:inline-block">Resiko Stunting (-1 ke -2 SD)</span>
-             </div>
-             <div className="h-[30%] flex items-center justify-end px-4 border-t border-rose-100/50">
-               <span className="text-[10px] font-bold text-rose-600/60 uppercase tracking-widest hidden sm:inline-block">Stunting (&lt;-2 SD)</span>
-             </div>
           </div>
         </div>
 
         {/* Legend */}
         <div className="mt-6 flex flex-wrap gap-4 items-center justify-center sm:justify-start">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-emerald-400" />
-            <span className="text-xs text-gray-600 font-medium">Normal</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-amber-400" />
-            <span className="text-xs text-gray-600 font-medium">
-              Resiko Stunting
+            <div className="w-6 h-0.5 bg-primary" />
+            <span className="text-xs font-bold text-primary">
+              Pertumbuhan {childName}
             </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-rose-400" />
-            <span className="text-xs text-gray-600 font-medium">Stunting</span>
-          </div>
-          <div className="flex items-center gap-2 ml-auto">
-            <div className="w-6 h-0.5 bg-amber-500" />
-            <span className="text-xs font-bold text-amber-600">
-              Pertumbuhan Budi
-            </span>
-          </div>
-        </div>
-
-        {/* Trend insight */}
-        <div className="flex items-start gap-4 mt-6 bg-blue-50 p-4 rounded-xl border border-blue-100">
-          <TrendingUp size={20} className="text-blue-500 mt-0.5 shrink-0" />
-          <div>
-            <h4 className="text-sm font-bold text-blue-700">
-              {trendInsight.title}
-            </h4>
-            <p className="text-xs text-blue-600 mt-1">
-              {trendInsight.description}
-            </p>
           </div>
         </div>
       </CardContent>

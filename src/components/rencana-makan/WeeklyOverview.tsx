@@ -1,35 +1,62 @@
 "use client";
 
-import { CalendarDays, Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import type { GiziProgressResponse } from "@/lib/types/gizi.types";
+import { Card, CardContent } from "@/components/ui/card";
 
-export default function WeeklyOverview() {
+interface WeeklyOverviewProps {
+  progress: GiziProgressResponse | null;
+  loading: boolean;
+}
+
+export default function WeeklyOverview({ progress, loading }: WeeklyOverviewProps) {
+  if (loading) {
+    return (
+      <Card className="rounded-2xl border-gray-100 shadow-sm mb-8">
+        <CardContent className="p-6 flex items-center justify-center">
+          <Loader2 size={24} className="animate-spin text-gray-400" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!progress) return null;
+
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+
   return (
-    <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-      <div>
-        <p className="text-slate-500 text-sm font-medium uppercase tracking-wider mb-1">
-          Oktober 2024
-        </p>
-        <h1 className="text-3xl font-bold text-slate-900">
-          Rencana Minggu ke-3
-        </h1>
-      </div>
-      <div className="flex gap-2">
-        <Button
-          variant="outline"
-          className="flex items-center gap-2 border-slate-200 text-slate-600 hover:border-primary bg-white text-gray-800"
-        >
-          <CalendarDays className="w-5 h-5" />
-          Pilih Minggu
-        </Button>
-        <Button
-          variant="outline"
-          className="flex items-center gap-2 border-slate-200 text-slate-600 hover:border-primary bg-white text-gray-800"
-        >
-          <Download className="w-5 h-5" />
-          Unduh PDF
-        </Button>
-      </div>
-    </div>
+    <Card className="rounded-2xl border-gray-100 shadow-sm mb-8 bg-gradient-to-r from-primary/5 to-teal-50">
+      <CardContent className="p-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h2 className="font-bold text-xl text-slate-800">
+              Minggu ke-{progress.minggu_ke}
+            </h2>
+            <p className="text-sm text-slate-500">
+              {formatDate(progress.tanggal_mulai)} — {formatDate(progress.tanggal_selesai)}
+            </p>
+          </div>
+          <div className="text-right">
+            <div className="text-3xl font-bold text-primary">
+              {progress.overall_percentage}%
+            </div>
+            <p className="text-xs text-slate-500">{progress.overall_progress}</p>
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        <div className="mt-4 w-full bg-gray-200 rounded-full h-2">
+          <div
+            className="bg-primary h-2 rounded-full transition-all duration-500"
+            style={{ width: `${progress.overall_percentage}%` }}
+          />
+        </div>
+      </CardContent>
+    </Card>
   );
 }
