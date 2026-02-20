@@ -307,6 +307,128 @@ export const ROUTES = {
   PROFILE: "/profile",
 } as const;
 
+export const apiRoutes = {
+  /* ===================== */
+  /* API BASE */
+  /* ===================== */
+  API: {
+    BASE: "/api",
+
+    /* ===================== */
+    /* Auth */
+    /* ===================== */
+    AUTH: {
+      REGISTER: "/api/auth/register",
+      LOGIN: "/api/auth/login",
+      REFRESH: "/api/auth/refresh",
+      LOGOUT: "/api/auth/logout",
+      PROFILE: "/api/auth/profile",
+      CHANGE_PASSWORD: "/api/auth/change-password",
+    },
+
+    /* ===================== */
+    /* Anak */
+    /* ===================== */
+    ANAK: {
+      LIST: "/api/anak",
+      CREATE: "/api/anak",
+      DETAIL: (anakId: number | string) => `/api/anak/${anakId}`,
+      DASHBOARD: (anakId: number | string) => `/api/anak/${anakId}/dashboard`,
+      UPDATE: (anakId: number | string) => `/api/anak/${anakId}`,
+      DELETE: (anakId: number | string) => `/api/anak/${anakId}`,
+
+      /* ===================== */
+      /* Pertumbuhan */
+      /* ===================== */
+      PERTUMBUHAN: {
+        LIST: (anakId: number | string) => `/api/anak/${anakId}/pertumbuhan`,
+        CREATE: (anakId: number | string) => `/api/anak/${anakId}/pertumbuhan`,
+        LATEST: (anakId: number | string) =>
+          `/api/anak/${anakId}/pertumbuhan/latest`,
+        CHART: (anakId: number | string, months?: number) =>
+          `/api/anak/${anakId}/pertumbuhan/chart${
+            months ? `?months=${months}` : ""
+          }`,
+        STATISTICS: (anakId: number | string) =>
+          `/api/anak/${anakId}/pertumbuhan/statistics`,
+        DETAIL: (anakId: number | string, pertumbuhanId: number | string) =>
+          `/api/anak/${anakId}/pertumbuhan/${pertumbuhanId}`,
+      },
+
+      /* ===================== */
+      /* Diagnosa */
+      /* ===================== */
+      DIAGNOSA: {
+        HISTORY: (anakId: number | string, limit = 10) =>
+          `/api/anak/${anakId}/diagnosa?limit=${limit}`,
+        LATEST: (anakId: number | string) =>
+          `/api/anak/${anakId}/diagnosa/latest`,
+        SUMMARY: (anakId: number | string) =>
+          `/api/anak/${anakId}/diagnosa/summary`,
+        ANALYZE: (anakId: number | string) =>
+          `/api/anak/${anakId}/diagnosa/analyze`,
+      },
+
+      /* ===================== */
+      /* Gizi */
+      /* ===================== */
+      GIZI: {
+        RENCANA: {
+          CURRENT: (anakId: number | string) =>
+            `/api/anak/${anakId}/gizi/rencana`,
+          HISTORY: (anakId: number | string, limit = 10, offset = 0) =>
+            `/api/anak/${anakId}/gizi/rencana/history?limit=${limit}&offset=${offset}`,
+          GENERATE: (anakId: number | string) =>
+            `/api/anak/${anakId}/gizi/rencana/generate`,
+          COMPLETE: (anakId: number | string, rencanaId: number | string) =>
+            `/api/anak/${anakId}/gizi/rencana/${rencanaId}/complete`,
+        },
+
+        TODAY: (anakId: number | string) => `/api/anak/${anakId}/gizi/today`,
+        HARI: (anakId: number | string, hariKe: number) =>
+          `/api/anak/${anakId}/gizi/hari/${hariKe}`,
+
+        PROGRESS: (anakId: number | string) =>
+          `/api/anak/${anakId}/gizi/progress`,
+        UPDATE_MAKANAN: (anakId: number | string, detailId: number | string) =>
+          `/api/anak/${anakId}/gizi/makanan/${detailId}`,
+      },
+
+      /* ===================== */
+      /* Reminder */
+      /* ===================== */
+      REMINDER: {
+        LIST: (anakId: number | string, activeOnly?: boolean) =>
+          `/api/anak/${anakId}/reminder${activeOnly ? "?activeOnly=true" : ""}`,
+        DETAIL: (anakId: number | string, reminderId: number | string) =>
+          `/api/anak/${anakId}/reminder/${reminderId}`,
+        CREATE: (anakId: number | string) => `/api/anak/${anakId}/reminder`,
+        GENERATE_DEFAULTS: (anakId: number | string) =>
+          `/api/anak/${anakId}/reminder/generate-defaults`,
+        TOGGLE: (anakId: number | string, reminderId: number | string) =>
+          `/api/anak/${anakId}/reminder/${reminderId}/toggle`,
+      },
+
+      /* ===================== */
+      /* Alergi */
+      /* ===================== */
+      ALERGI: {
+        LIST: (anakId: number | string) => `/api/anak/${anakId}/alergi`,
+        SUMMARY: (anakId: number | string) =>
+          `/api/anak/${anakId}/alergi/summary`,
+        CREATE: (anakId: number | string) => `/api/anak/${anakId}/alergi`,
+        DETAIL: (anakId: number | string, alergiId: number | string) =>
+          `/api/anak/${anakId}/alergi/${alergiId}`,
+      },
+    },
+
+    /* ===================== */
+    /* Health Check */
+    /* ===================== */
+    HEALTH: "/api/health",
+  },
+} as const;
+
 // ============================================
 // API ENDPOINTS
 // ============================================
