@@ -1,158 +1,211 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
+import { useState, useEffect } from "react";
+import { TrendingUp, Loader2 } from "lucide-react";
+import { useAnak } from "@/contexts/AnakContext";
+import { pertumbuhanService } from "@/lib/api/services/pertumbuhan.service";
+import type { GrowthChartData } from "@/lib/types/pertumbuhan.types";
 import {
-  growthDataPoints,
-  chartZones,
-  trendInsight,
-} from "@/lib/data/pertumbuhan-data";
-import { useState } from "react";
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 
 const tabs = ["TB/U", "BB/U"] as const;
 
 export default function GrowthChart() {
+  const { selectedAnak, selectedAnakId } = useAnak();
+  const [chartData, setChartData] = useState<GrowthChartData | null>(null);
   const [activeTab, setActiveTab] = useState<string>("TB/U");
+  const [loading, setLoading] = useState(false);
 
-  // Build SVG path
-  const pathD = growthDataPoints
-    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
-    .join(" ");
+  useEffect(() => {
+    if (!selectedAnakId) return;
+    let cancelled = false;
 
-  return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-        <div>
-          <h3 className="font-[var(--font-display)] font-bold text-xl text-gray-800">
-            Tren Pertumbuhan
-          </h3>
-          <p className="text-sm text-gray-500">
-            Analisis Z-Score TB/U Berdasarkan Standar WHO
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex bg-gray-100 p-1 rounded-lg">
-            {tabs.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
-                  activeTab === tab
-                    ? "bg-white shadow-sm text-primary"
-                    : "text-gray-500"
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
+    const fetch = async () => {
+      setLoading(true);
+      try {
+        const data = await pertumbuhanService.getGrowthChart(selectedAnakId);
+        if (!cancelled) setChartData(data);
+      } catch {
+        if (!cancelled) setChartData(null);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    fetch();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedAnakId]);
+
+  if (loading) {
+    return (
+      <Card className="rounded-3xl shadow-sm border-gray-100 overflow-hidden bg-white">
+        <CardContent className="p-10 flex items-center justify-center">
+          <Loader2 size={32} className="animate-spin text-gray-400" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!chartData || chartData.labels.length === 0) {
+    return (
+      <Card className="rounded-3xl shadow-sm border-gray-100 overflow-hidden bg-white text-gray-800">
+        <CardContent className="p-10 flex flex-col items-center justify-center text-gray-400 gap-3">
+          <TrendingUp size={48} />
+          <span className="text-sm">Belum ada data pertumbuhan untuk ditampilkan</span>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Build recharts data from API response
+  const isTBMode = activeTab === "TB/U";
+  const datasetValues = isTBMode
+    ? chartData.datasets.tinggi_badan
+    : chartData.datasets.berat_badan;
+
+  const rechartsData = chartData.labels.map((label, idx) => ({
+    name: label,
+    value: datasetValues[idx] ?? 0,
+  }));
+
+  const yUnit = isTBMode ? "cm" : "kg";
+  const childName = chartData.metadata?.nama_anak ?? selectedAnak?.nama_anak ?? "Anak";
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-2 border border-gray-100 shadow-sm rounded-lg text-xs z-50 relative">
+          <p className="font-bold text-gray-700 mb-1">{label}</p>
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 rounded-full bg-primary" />
+            <p className="text-primary font-medium">
+              {payload[0].value} {yUnit}
+            </p>
           </div>
         </div>
-      </div>
+      );
+    }
+    return null;
+  };
 
-      {/* Chart */}
-      <div className="relative w-full aspect-[16/7] min-h-[280px] bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
-        {/* Zone backgrounds */}
-        <div className="absolute inset-0 flex flex-col">
-          {chartZones.map((zone, i) => (
-            <div
-              key={i}
-              className={`${zone.bgColor} ${i < chartZones.length - 1 ? `border-b ${zone.borderColor}` : ""} flex items-center justify-end px-4`}
-              style={{ height: zone.height }}
-            >
-              <span
-                className={`text-[10px] font-bold ${zone.labelColor} uppercase tracking-widest`}
-              >
-                {zone.label}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        {/* Grid lines */}
-        <div className="absolute inset-0 p-8 flex flex-col justify-between opacity-30">
-          {[...Array(4)].map((_, i) => (
-            <div
-              key={i}
-              className="w-full border-t border-gray-300 border-dashed"
-            />
-          ))}
-        </div>
-
-        {/* SVG Line + Points */}
-        <svg
-          className="absolute inset-0 w-full h-full p-8"
-          preserveAspectRatio="none"
-          viewBox="0 0 100 100"
-        >
-          <path
-            d={pathD}
-            fill="none"
-            stroke="#F59E0B"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            className="drop-shadow-sm"
-          />
-          {growthDataPoints.map((p, i) => {
-            const isLast = i === growthDataPoints.length - 1;
-            return (
-              <circle
-                key={i}
-                cx={p.x}
-                cy={p.y}
-                r={isLast ? 2.5 : 2}
-                fill={isLast ? "#F59E0B" : "white"}
-                stroke={isLast ? "white" : "#F59E0B"}
-                strokeWidth="1"
-              />
-            );
-          })}
-        </svg>
-
-        {/* Month labels */}
-        <div className="absolute bottom-2 left-0 w-full flex justify-between px-8 text-[10px] font-bold text-gray-400 uppercase">
-          {growthDataPoints.map((p) => (
-            <span key={p.month}>{p.month}</span>
-          ))}
-        </div>
-      </div>
-
-      {/* Legend */}
-      <div className="mt-6 flex flex-wrap gap-4 items-center justify-center sm:justify-start">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-emerald-400" />
-          <span className="text-xs text-gray-600 font-medium">Normal</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-amber-400" />
-          <span className="text-xs text-gray-600 font-medium">
-            Resiko Stunting
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-rose-400" />
-          <span className="text-xs text-gray-600 font-medium">Stunting</span>
-        </div>
-        <div className="flex items-center gap-2 ml-auto">
-          <div className="w-6 h-0.5 bg-amber-500" />
-          <span className="text-xs font-bold text-amber-600">
-            Pertumbuhan Budi
-          </span>
-        </div>
-      </div>
-
-      {/* Trend insight */}
-      <div className="flex items-start gap-4 mt-6 bg-blue-50 p-4 rounded-xl border border-blue-100">
-        <TrendingUp size={20} className="text-blue-500 mt-0.5 shrink-0" />
+  return (
+    <Card className="rounded-3xl shadow-sm border-gray-100 overflow-hidden bg-white text-gray-800">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 space-y-0 pb-2">
         <div>
-          <h4 className="text-sm font-bold text-blue-700">
-            {trendInsight.title}
-          </h4>
-          <p className="text-xs text-blue-600 mt-1">
-            {trendInsight.description}
-          </p>
+          <CardTitle className="font-[var(--font-display)] font-bold text-xl text-gray-800">
+            Tren Pertumbuhan
+          </CardTitle>
+          <CardDescription className="text-sm text-gray-500">
+            {isTBMode ? "Tinggi Badan" : "Berat Badan"} per Pengukuran —{" "}
+            {childName}
+          </CardDescription>
         </div>
-      </div>
-    </div>
+        <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
+          {tabs.map((tab) => (
+            <Button
+              key={tab}
+              variant={activeTab === tab ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setActiveTab(tab)}
+              className={cn(
+                "h-8 px-3 text-xs font-bold rounded-md transition-all shadow-none hover:bg-white/50",
+                activeTab === tab
+                  ? "bg-white text-primary shadow-sm hover:bg-white"
+                  : "text-gray-500 hover:text-gray-700 bg-transparent"
+              )}
+            >
+              {tab}
+            </Button>
+          ))}
+        </div>
+      </CardHeader>
+
+      <CardContent className="p-6 pt-4">
+        <div className="relative w-full aspect-[16/7] min-h-[280px] bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
+          <div className="absolute inset-0 pb-6 w-full h-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={rechartsData}
+                margin={{ top: 20, right: 30, left: 10, bottom: 5 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#e5e7eb"
+                  opacity={0.6}
+                />
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{
+                    fontSize: 10,
+                    fill: "#9ca3af",
+                    fontWeight: "bold",
+                  }}
+                  dy={10}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 10, fill: "#9ca3af" }}
+                  width={40}
+                  unit={` ${yUnit}`}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth={2}
+                  dot={{
+                    r: 4,
+                    fill: "white",
+                    stroke: "hsl(var(--primary))",
+                    strokeWidth: 2,
+                  }}
+                  activeDot={{
+                    r: 6,
+                    fill: "hsl(var(--primary))",
+                    stroke: "white",
+                    strokeWidth: 2,
+                  }}
+                  isAnimationActive={true}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div className="mt-6 flex flex-wrap gap-4 items-center justify-center sm:justify-start">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-0.5 bg-primary" />
+            <span className="text-xs font-bold text-primary">
+              Pertumbuhan {childName}
+            </span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

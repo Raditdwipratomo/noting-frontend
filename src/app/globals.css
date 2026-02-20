@@ -1,37 +1,134 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* NutriStunting Design Tokens */
+  --color-primary: #14B8A6;
+  --color-primary-hover: #0d9488;
+  --color-secondary: #FB7185;
+  --color-bg-light: #F0FDFA;
+  --color-bg-dark: #111827;
+  --color-card-light: #FFFFFF;
+  --color-card-dark: #1F2937;
+  --color-text-main: #334155;
+  --color-text-sub: #64748B;
+
+  --font-display: "Fredoka", sans-serif;
+  --font-body: "Nunito Sans", sans-serif;
+
+  /* Shadcn UI Variables */
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  /* Default Shadcn Setup Mapped to NutriStunting */
+  --background: #F0FDFA; /* Using bg-light as base? No, allow white but maybe... existing used white */
+  --foreground: #334155; /* text-main */
+  
+  --card: #FFFFFF;
+  --card-foreground: #334155;
+ 
+  --popover: #FFFFFF;
+  --popover-foreground: #334155;
+ 
+  --primary: #14B8A6; /* Teal-500 */
+  --primary-foreground: #FFFFFF;
+ 
+  --secondary: #FB7185; /* Rose-400 */
+  --secondary-foreground: #FFFFFF;
+ 
+  --muted: #F1F5F9; /* Slate-100 */
+  --muted-foreground: #64748B; /* Slate-500 */
+ 
+  --accent: #F1F5F9; /* Slate-100 */
+  --accent-foreground: #0F172A; /* Slate-900 */
+ 
+  --destructive: #EF4444; /* Red-500 */
+  --destructive-foreground: #FFFFFF;
+
+  --border: #E2E8F0; /* Slate-200 */
+  --input: #E2E8F0;
+  --ring: #14B8A6;
+ 
+  --radius: 0.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #111827; /* bg-dark */
+    --foreground: #F8FAFC; /* Slate-50 */
+ 
+    --card: #1F2937; /* card-dark */
+    --card-foreground: #F8FAFC;
+ 
+    --popover: #1F2937;
+    --popover-foreground: #F8FAFC;
+ 
+    --primary: #2DD4BF; /* Teal-400 for dark mode accessibility? Using same for consistency first */
+    --primary-foreground: #111827;
+ 
+    --secondary: #FB7185;
+    --secondary-foreground: #111827;
+ 
+    --muted: #374151; /* Gray-700 */
+    --muted-foreground: #9CA3AF; /* Gray-400 */
+ 
+    --accent: #374151;
+    --accent-foreground: #F8FAFC;
+ 
+    --destructive: #991B1B; /* Red-900 */
+    --destructive-foreground: #F8FAFC;
+ 
+    --border: #374151;
+    --input: #374151;
+    --ring: #2DD4BF;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
 }
 
-/* Hilangkan ikon mata di Edge/IE */
+/* Scrollbar and custom utilities */
+.hide-scroll::-webkit-scrollbar {
+  display: none;
+}
+.hide-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
 }
 
-/* Hilangkan ikon mata di browser berbasis Chromium (Edge baru) */
 input[type="password"]::-webkit-textfield-decoration-container,
 input[type="password"]::-webkit-contacts-auto-fill-button {
   visibility: hidden;

@@ -49,12 +49,7 @@ export const diagnosisStatus = {
 export const zScoreStats: ZScoreStat[] = [
   { label: "TB/U", value: "-1.8 SD", status: "Pendek", statusColor: "amber" },
   { label: "BB/U", value: "-0.5 SD", status: "Normal", statusColor: "emerald" },
-  {
-    label: "BB/TB",
-    value: "0.2 SD",
-    status: "Gizi Baik",
-    statusColor: "emerald",
-  },
+  { label: "BB/TB", value: "0.2 SD", status: "Gizi Baik", statusColor: "emerald" },
 ];
 
 // ─── Growth Trend Chart ──────────────────────────────────

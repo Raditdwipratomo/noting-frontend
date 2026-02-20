@@ -1,19 +1,26 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import {
   LayoutDashboard,
   TrendingUp,
   UtensilsCrossed,
   Bell,
+  Baby,
+  ShieldAlert,
+  LogOut,
 } from "lucide-react";
-import { userProfile } from "@/lib/data/dashboard-data";
+import { useAuth } from "@/contexts/AuthContext";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "Beranda", icon: LayoutDashboard, href: "/dashboard" },
   { label: "Pertumbuhan", icon: TrendingUp, href: "/pertumbuhan" },
-  { label: "Rencana Makan", icon: UtensilsCrossed, href: "#" },
+  { label: "Rencana Makan", icon: UtensilsCrossed, href: "/rencana-makan" },
+  { label: "Profile Anak", icon: Baby, href: "/profile" },
+  { label: "Alergi", icon: ShieldAlert, href: "/alergi" },
 ];
 
 interface DashboardHeaderProps {
@@ -23,6 +30,17 @@ interface DashboardHeaderProps {
 export default function DashboardHeader({
   activePage = "/dashboard",
 }: DashboardHeaderProps) {
+  const { user, logout } = useAuth();
+
+  const initials = user?.nama_lengkap
+    ? user.nama_lengkap
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : "U";
+
   return (
     <header className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky top-0 z-20">
       {/* Logo */}
@@ -43,11 +61,12 @@ export default function DashboardHeader({
             <Link
               key={item.label}
               href={item.href}
-              className={`px-6 py-2 rounded-full text-sm flex items-center gap-2 transition-all ${
+              className={cn(
+                "px-6 py-2 rounded-full text-sm flex items-center gap-2 transition-all",
                 isActive
                   ? "bg-white shadow-sm text-primary font-bold border border-gray-100 hover:scale-105"
                   : "text-gray-500 hover:text-primary font-medium"
-              }`}
+              )}
             >
               <item.icon size={18} />
               {item.label}
@@ -58,19 +77,36 @@ export default function DashboardHeader({
 
       {/* Right actions */}
       <div className="flex items-center gap-3">
-        <button className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition-colors relative">
+        <Button
+          variant="secondary"
+          size="icon"
+          className="rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 relative"
+        >
           <Bell size={20} />
           <span className="absolute top-2 right-2 w-2 h-2 bg-secondary rounded-full border-2 border-white" />
-        </button>
-        <div className="w-10 h-10 rounded-full bg-orange-100 overflow-hidden border-2 border-white shadow-sm">
-          <Image
-            src={userProfile.photo}
-            alt="Foto Profil Bunda"
-            width={40}
-            height={40}
-            className="w-full h-full object-cover"
-          />
+        </Button>
+
+        <div className="flex items-center gap-2">
+          <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
+            <AvatarImage src="" alt={user?.nama_lengkap ?? "User"} className="object-cover" />
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+          {user && (
+            <span className="text-sm font-medium text-gray-700 hidden lg:block">
+              {user.nama_lengkap}
+            </span>
+          )}
         </div>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={logout}
+          className="rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50"
+          title="Logout"
+        >
+          <LogOut size={18} />
+        </Button>
       </div>
     </header>
   );
