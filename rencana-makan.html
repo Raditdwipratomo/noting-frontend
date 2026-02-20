@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NutriStunting - Rencana Gizi Mingguan</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+        :root {
+            --primary: #4ccdc4;
+            --primary-dark: #3abeb5;
+            --background: #f8fafc;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1;
+        }
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+<header class="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-slate-100 px-6 py-4">
+<div class="max-w-7xl mx-auto flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="size-10 bg-[var(--primary)] rounded-xl flex items-center justify-center text-white">
+<span class="material-symbols-outlined filled">child_care</span>
+</div>
+<span class="font-bold text-xl tracking-tight text-slate-800">NutriStunting</span>
+</div>
+<nav class="hidden md:flex items-center bg-slate-100 rounded-full p-1 border border-slate-200">
+<a class="px-6 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-[var(--primary)] transition-colors" href="#">Beranda</a>
+<a class="px-6 py-2 rounded-full text-sm font-medium text-slate-600 hover:text-[var(--primary)] transition-colors" href="#">Pertumbuhan</a>
+<a class="px-6 py-2 rounded-full text-sm font-bold bg-white text-[var(--primary)] shadow-sm" href="#">Rencana Makan</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="size-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="size-10 rounded-full bg-slate-200 overflow-hidden border-2 border-white shadow-sm">
+<img alt="Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWibYyxqIiMJ2dkbx189h2Z9gYU8hWEWoOUxA0aIFX_dzpjxX_I3rKz5dCTcJW2MaT0KAX3ICDaGdc4ptWLapYcjPhWBFQFgBHUYI03U86mEuJYYJg_fxLFDEKKXilayYi8qmn02K4KVOT1H_fjv4q8uXliuNQyyMETRS3yebkIO7_nEFbECvJNcv1fnpO0VfWobezjDcpKpBVKY-QaG7StRIetX_zDQ51VEL2bZqWn774ICwhOkIUmq_SWFw-1bdT5f7mZ20u_j0"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 py-10">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+<div>
+<p class="text-[var(--text-secondary)] text-sm font-medium uppercase tracking-wider mb-1">Oktober 2024</p>
+<h1 class="text-3xl font-bold text-slate-900">Rencana Minggu ke-3</h1>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:border-[var(--primary)] transition-all">
+<span class="material-symbols-outlined text-lg">calendar_month</span>
+                    Pilih Minggu
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:border-[var(--primary)] transition-all">
+<span class="material-symbols-outlined text-lg">download</span>
+                    Unduh PDF
+                </button>
+</div>
+</div>
+<div class="flex flex-col lg:flex-row gap-8">
+<div class="lg:w-[65%] space-y-4">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+<span class="material-symbols-outlined text-[var(--primary)]">calendar_view_day</span>
+                        Ikhtisar Mingguan
+                    </h2>
+<span class="text-sm font-medium text-[var(--text-secondary)]">24 dari 49 Menu Selesai</span>
+</div>
+<div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-[var(--primary)] transition-all cursor-pointer group">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-xl bg-slate-50 flex flex-col items-center justify-center border border-slate-100">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Sen</span>
+<span class="text-lg font-bold text-slate-700 leading-none">14</span>
+</div>
+<div>
+<h3 class="font-bold text-slate-800">Hari 1 - Senin</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs px-2 py-0.5 bg-emerald-50 text-emerald-600 font-bold rounded">Selesai</span>
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-emerald-500 text-sm filled">water_drop</span>
+<span class="material-symbols-outlined text-emerald-500 text-sm filled">restaurant</span>
+<span class="material-symbols-outlined text-emerald-500 text-sm filled">cookie</span>
+<span class="material-symbols-outlined text-emerald-500 text-sm filled">lunch_dining</span>
+<span class="material-symbols-outlined text-emerald-500 text-sm filled">icecream</span>
+<span class="material-symbols-outlined text-emerald-500 text-sm filled">dinner_dining</span>
+<span class="material-symbols-outlined text-emerald-500 text-sm filled">bedtime</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1 min-w-[120px]">
+<div class="flex justify-between w-full text-[10px] font-bold text-slate-500 mb-1">
+<span>Progres</span>
+<span>7/7 Selesai</span>
+</div>
+<div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500 rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white p-5 rounded-2xl shadow-sm border-2 border-[var(--primary)] ring-4 ring-[var(--primary)]/5 transition-all cursor-pointer relative overflow-hidden">
+<div class="absolute right-0 top-0 bg-[var(--primary)] text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg">HARI INI</div>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-xl bg-[var(--primary)]/10 flex flex-col items-center justify-center border border-[var(--primary)]/20">
+<span class="text-[10px] font-bold text-[var(--primary)] uppercase">Sel</span>
+<span class="text-lg font-bold text-[var(--primary)] leading-none">15</span>
+</div>
+<div>
+<h3 class="font-bold text-slate-800">Hari 2 - Selasa</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 font-bold rounded">Aktif</span>
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-emerald-500 text-sm filled">water_drop</span>
+<span class="material-symbols-outlined text-emerald-500 text-sm filled">restaurant</span>
+<span class="material-symbols-outlined text-emerald-500 text-sm filled">cookie</span>
+<span class="material-symbols-outlined text-emerald-500 text-sm filled">lunch_dining</span>
+<span class="material-symbols-outlined text-emerald-500 text-sm filled">icecream</span>
+<span class="material-symbols-outlined text-slate-300 text-sm">dinner_dining</span>
+<span class="material-symbols-outlined text-slate-300 text-sm">bedtime</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1 min-w-[120px]">
+<div class="flex justify-between w-full text-[10px] font-bold text-slate-500 mb-1">
+<span>Progres</span>
+<span>5/7 Sedang Berjalan</span>
+</div>
+<div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-[var(--primary)] rounded-full" style="width: 71%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-slate-200 transition-all cursor-pointer group">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-xl bg-slate-50 flex flex-col items-center justify-center border border-slate-100">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Rab</span>
+<span class="text-lg font-bold text-slate-700 leading-none">16</span>
+</div>
+<div>
+<h3 class="font-bold text-slate-800">Hari 3 - Rabu</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs px-2 py-0.5 bg-slate-100 text-slate-500 font-bold rounded">Belum Dimulai</span>
+<div class="flex gap-1 opacity-40">
+<span class="material-symbols-outlined text-slate-400 text-sm">water_drop</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">restaurant</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">cookie</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">lunch_dining</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">icecream</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">dinner_dining</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">bedtime</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1 min-w-[120px]">
+<div class="flex justify-between w-full text-[10px] font-bold text-slate-500 mb-1">
+<span>Progres</span>
+<span>0/7 Selesai</span>
+</div>
+<div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-slate-300 rounded-full" style="width: 0%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-slate-200 transition-all cursor-pointer group">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-xl bg-slate-50 flex flex-col items-center justify-center border border-slate-100">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Kam</span>
+<span class="text-lg font-bold text-slate-700 leading-none">17</span>
+</div>
+<div>
+<h3 class="font-bold text-slate-800">Hari 4 - Kamis</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs px-2 py-0.5 bg-slate-100 text-slate-500 font-bold rounded">Belum Dimulai</span>
+<div class="flex gap-1 opacity-40">
+<span class="material-symbols-outlined text-slate-400 text-sm">water_drop</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">restaurant</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">cookie</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">lunch_dining</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">icecream</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">dinner_dining</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">bedtime</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1 min-w-[120px]">
+<div class="flex justify-between w-full text-[10px] font-bold text-slate-500 mb-1">
+<span>Progres</span>
+<span>0/7 Selesai</span>
+</div>
+<div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-slate-300 rounded-full" style="width: 0%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-slate-200 transition-all cursor-pointer group">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-xl bg-slate-50 flex flex-col items-center justify-center border border-slate-100">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Jum</span>
+<span class="text-lg font-bold text-slate-700 leading-none">18</span>
+</div>
+<div>
+<h3 class="font-bold text-slate-800">Hari 5 - Jumat</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs px-2 py-0.5 bg-slate-100 text-slate-500 font-bold rounded">Belum Dimulai</span>
+<div class="flex gap-1 opacity-40">
+<span class="material-symbols-outlined text-slate-400 text-sm">water_drop</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">restaurant</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">cookie</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">lunch_dining</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">icecream</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">dinner_dining</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">bedtime</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1 min-w-[120px]">
+<div class="flex justify-between w-full text-[10px] font-bold text-slate-500 mb-1">
+<span>Progres</span>
+<span>0/7 Selesai</span>
+</div>
+<div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-slate-300 rounded-full" style="width: 0%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-slate-200 transition-all cursor-pointer group">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-xl bg-slate-50 flex flex-col items-center justify-center border border-slate-100">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Sab</span>
+<span class="text-lg font-bold text-slate-700 leading-none">19</span>
+</div>
+<div>
+<h3 class="font-bold text-slate-800">Hari 6 - Sabtu</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs px-2 py-0.5 bg-slate-100 text-slate-500 font-bold rounded">Belum Dimulai</span>
+<div class="flex gap-1 opacity-40">
+<span class="material-symbols-outlined text-slate-400 text-sm">water_drop</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">restaurant</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">cookie</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">lunch_dining</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">icecream</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">dinner_dining</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">bedtime</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1 min-w-[120px]">
+<div class="flex justify-between w-full text-[10px] font-bold text-slate-500 mb-1">
+<span>Progres</span>
+<span>0/7 Selesai</span>
+</div>
+<div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-slate-300 rounded-full" style="width: 0%"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:border-slate-200 transition-all cursor-pointer group">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="size-12 rounded-xl bg-slate-50 flex flex-col items-center justify-center border border-slate-100">
+<span class="text-[10px] font-bold text-slate-400 uppercase">Min</span>
+<span class="text-lg font-bold text-slate-700 leading-none">20</span>
+</div>
+<div>
+<h3 class="font-bold text-slate-800">Hari 7 - Minggu</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs px-2 py-0.5 bg-slate-100 text-slate-500 font-bold rounded">Belum Dimulai</span>
+<div class="flex gap-1 opacity-40">
+<span class="material-symbols-outlined text-slate-400 text-sm">water_drop</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">restaurant</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">cookie</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">lunch_dining</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">icecream</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">dinner_dining</span>
+<span class="material-symbols-outlined text-slate-400 text-sm">bedtime</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1 min-w-[120px]">
+<div class="flex justify-between w-full text-[10px] font-bold text-slate-500 mb-1">
+<span>Progres</span>
+<span>0/7 Selesai</span>
+</div>
+<div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-slate-300 rounded-full" style="width: 0%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:w-[35%] space-y-6">
+<div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 flex flex-col items-center text-center sticky top-28">
+<h3 class="text-lg font-bold text-slate-800 mb-6">Ringkasan Mingguan</h3>
+<div class="relative flex items-center justify-center mb-6">
+<svg class="size-48">
+<circle class="text-slate-100" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-[var(--primary)] progress-ring-circle" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-dasharray="502.65" stroke-dashoffset="256.35" stroke-linecap="round" stroke-width="12"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="text-4xl font-black text-slate-900">49%</span>
+<span class="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-widest mt-1">Selesai</span>
+</div>
+</div>
+<div class="w-full space-y-4">
+<div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100 flex justify-between items-center">
+<div class="text-left">
+<span class="block text-[10px] font-bold text-emerald-700 uppercase">Tercapai</span>
+<span class="text-xl font-bold text-emerald-800">24</span>
+<span class="text-xs text-emerald-600 font-medium ml-1">Menu</span>
+</div>
+<span class="material-symbols-outlined text-emerald-500 text-3xl">task_alt</span>
+</div>
+<div class="bg-slate-50 rounded-xl p-4 border border-slate-100 flex justify-between items-center">
+<div class="text-left">
+<span class="block text-[10px] font-bold text-slate-600 uppercase">Sisa Target</span>
+<span class="text-xl font-bold text-slate-800">25</span>
+<span class="text-xs text-slate-500 font-medium ml-1">Menu</span>
+</div>
+<span class="material-symbols-outlined text-slate-400 text-3xl">pending_actions</span>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-slate-50 w-full text-left">
+<h4 class="font-bold text-slate-800 text-sm mb-3">Statistik Nutrisi Minggu Ini</h4>
+<div class="space-y-3">
+<div>
+<div class="flex justify-between text-[10px] font-bold mb-1">
+<span class="text-slate-500">Kebutuhan Energi</span>
+<span class="text-slate-900">7.350 / 10.850 kkal</span>
+</div>
+<div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-blue-500 rounded-full" style="width: 67%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-[10px] font-bold mb-1">
+<span class="text-slate-500">Target Protein</span>
+<span class="text-slate-900">175g / 245g</span>
+</div>
+<div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full bg-orange-500 rounded-full" style="width: 71%"></div>
+</div>
+</div>
+</div>
+<div class="mt-6 p-4 bg-teal-50 rounded-xl border border-teal-100 flex gap-3">
+<span class="material-symbols-outlined text-teal-600 text-xl">emoji_events</span>
+<p class="text-xs text-teal-800 leading-relaxed font-medium">
+                                Minggu yang luar biasa! Kamu sudah menyelesaikan hampir 50% rencana gizi. Terus konsisten untuk cegah stunting!
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="max-w-7xl mx-auto px-6 py-12 border-t border-slate-100 mt-10">
+<div class="flex flex-col md:flex-row items-center justify-between gap-6">
+<div class="flex items-center gap-2 grayscale opacity-50">
+<div class="size-8 bg-slate-400 rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined filled">child_care</span>
+</div>
+<span class="font-bold text-lg tracking-tight text-slate-600">NutriStunting</span>
+</div>
+<p class="text-[var(--text-secondary)] text-sm">© 2024 NutriStunting. Membantu cegah stunting untuk masa depan Indonesia.</p>
+</div>
+</footer>
+
+</body></html>
