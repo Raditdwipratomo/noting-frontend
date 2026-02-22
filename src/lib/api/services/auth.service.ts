@@ -81,8 +81,7 @@ function handleServiceError(error: unknown, context: string): never {
 }
 
 class AuthService {
-  private readonly basePath = `${process.env.NEXT_PUBLIC_API_GATEWAY_URL}/api/auth`;
-
+  // Base URL is handled globally by apiClient hooks.
   async register(data: RegisterRequest): Promise<AuthResponse> {
     if (!data || Object.keys(data).length === 0) {
       throw new AuthServiceError("Data registrasi tidak boleh kosong");

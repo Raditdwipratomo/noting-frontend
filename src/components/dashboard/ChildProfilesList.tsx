@@ -5,6 +5,7 @@ import { CirclePlus, Baby } from "lucide-react";
 import { useAnak } from "@/contexts/AnakContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 function getAgeText(tanggalLahir: string): string {
   const birth = new Date(tanggalLahir);
@@ -49,12 +50,14 @@ export default function ChildProfilesList() {
       </h3>
       <div className="flex gap-4 overflow-x-auto hide-scroll pb-2">
         {/* Add child button */}
-        <Card className="min-w-[120px] h-[140px] border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer hover:border-primary text-gray-400 hover:text-primary hover:bg-primary/5 transition-all flex flex-col items-center justify-center p-0 bg-white text-gray-800">
-          <CardContent className="p-0 flex flex-col items-center justify-center h-full ">
-            <CirclePlus size={30} className="mb-1" />
-            <span className="text-xs font-bold">Tambah Anak</span>
-          </CardContent>
-        </Card>
+        <Link href="/profile-anak/tambah-anak">
+          <Card className="min-w-[120px] h-[140px] border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer hover:border-primary text-gray-400 hover:text-primary hover:bg-primary/5 transition-all flex flex-col items-center justify-center p-0 bg-white text-gray-800">
+            <CardContent className="p-0 flex flex-col items-center justify-center h-full ">
+              <CirclePlus size={30} className="mb-1" />
+              <span className="text-xs font-bold">Tambah Anak</span>
+            </CardContent>
+          </Card>
+        </Link>
 
         {/* Child profiles from API */}
         {anakList.map((child) => {

@@ -1,40 +1,29 @@
-// lib/types/alergi.types.ts
-
 /* ===================== */
 /* Enums / Unions        */
 /* ===================== */
 
 export type TingkatKeparahan = "ringan" | "sedang" | "berat";
 
-export type JenisAlergi =
-  | "makanan"
-  | "obat"
-  | "lingkungan"
-  | "serangga"
-  | "lainnya";
-
 /* ===================== */
 /* Alergi                */
 /* ===================== */
 
 export interface AlergiResponse {
-  id_alergi: number;
+  id: number;
   anak_id: number;
-  nama_alergi: string;
-  jenis_alergi: JenisAlergi;
+  nama_alergen: string;
   tingkat_keparahan: TingkatKeparahan;
-  gejala: string;
-  catatan?: string | null;
+  deskripsi?: string | null;
+  tanggal_ditemukan?: string | null;
   created_at: string;
   updated_at: string;
 }
 
 export interface CreateAlergiRequest {
-  nama_alergi: string;
-  jenis_alergi: JenisAlergi;
+  nama_alergen: string;
   tingkat_keparahan: TingkatKeparahan;
-  gejala: string;
-  catatan?: string;
+  deskripsi?: string;
+  tanggal_ditemukan?: string;
 }
 
 export type UpdateAlergiRequest = Partial<CreateAlergiRequest>;
@@ -44,8 +33,8 @@ export type UpdateAlergiRequest = Partial<CreateAlergiRequest>;
 /* ===================== */
 
 export interface AlergiSummaryResponse {
-  total_alergi: number;
-  by_jenis: Partial<Record<JenisAlergi, number>>;
-  by_tingkat_keparahan: Partial<Record<TingkatKeparahan, number>>;
-  alergi_berat: AlergiResponse[];
+  total: number;
+  by_severity: Partial<Record<TingkatKeparahan, number>>;
+  list: string[];
+  severe_allergies: string[];
 }

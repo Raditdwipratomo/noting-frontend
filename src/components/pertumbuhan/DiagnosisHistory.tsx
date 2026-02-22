@@ -8,6 +8,7 @@ import type { DiagnosaResponseData } from "@/lib/types/diagnosa.types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 function getStatusStyle(status: string): {
   color: "amber" | "emerald";
@@ -141,6 +142,11 @@ export default function DiagnosisHistory() {
                           <span>
                             BB: {record.pertumbuhan.berat_badan_kg}kg
                           </span>
+                          {record.pertumbuhan.lingkar_lengan_atas_cm && (
+                            <span>
+                              LILA: {record.pertumbuhan.lingkar_lengan_atas_cm}cm
+                            </span>
+                          )}
                         </>
                       )}
                     </div>
@@ -154,13 +160,15 @@ export default function DiagnosisHistory() {
 
       {/* Input Button */}
       <div className="mt-auto pt-6">
-        <Button
-          variant="secondary"
-          className="w-full py-6 bg-secondary hover:bg-rose-500 text-white rounded-xl font-bold shadow-lg shadow-rose-200 transition-all flex items-center justify-center gap-2"
-        >
-          <BarChart3 size={20} />
-          Input Pengukuran Baru
-        </Button>
+        <Link href="/pertumbuhan/input-data">
+          <Button
+            variant="secondary"
+            className="w-full py-6 bg-secondary hover:bg-rose-500 text-white rounded-xl font-bold shadow-lg shadow-rose-200 transition-all flex items-center justify-center gap-2"
+          >
+            <BarChart3 size={20} />
+            Input Pengukuran Baru
+          </Button>
+        </Link>
       </div>
     </div>
   );

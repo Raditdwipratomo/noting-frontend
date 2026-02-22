@@ -14,7 +14,6 @@ import { useAnak } from "@/contexts/AnakContext";
 import { alergiService } from "@/lib/api/services/alergi.service";
 import type {
   AlergiResponse,
-  JenisAlergi,
   TingkatKeparahan,
   CreateAlergiRequest,
 } from "@/lib/types/alergi.types";
@@ -36,27 +35,21 @@ export default function AlergiFormModal({
   const [loading, setLoading] = useState(false);
 
   // Form State
-  const [namaAlergi, setNamaAlergi] = useState("");
-  const [jenisAlergi, setJenisAlergi] = useState<JenisAlergi | "">("");
+  const [namaAlergen, setNamaAlergen] = useState("");
   const [tingkatKeparahan, setTingkatKeparahan] = useState<TingkatKeparahan | "">("");
-  const [gejala, setGejala] = useState("");
-  const [catatan, setCatatan] = useState("");
+  const [deskripsi, setDeskripsi] = useState("");
 
   useEffect(() => {
     if (isOpen) {
       if (alergiToEdit) {
-        setNamaAlergi(alergiToEdit.nama_alergi);
-        setJenisAlergi(alergiToEdit.jenis_alergi);
+        setNamaAlergen(alergiToEdit.nama_alergen);
         setTingkatKeparahan(alergiToEdit.tingkat_keparahan);
-        setGejala(alergiToEdit.gejala);
-        setCatatan(alergiToEdit.catatan || "");
+        setDeskripsi(alergiToEdit.deskripsi || "");
       } else {
         // Reset form
-        setNamaAlergi("");
-        setJenisAlergi("");
+        setNamaAlergen("");
         setTingkatKeparahan("");
-        setGejala("");
-        setCatatan("");
+        setDeskripsi("");
       }
     }
   }, [isOpen, alergiToEdit]);
@@ -65,7 +58,7 @@ export default function AlergiFormModal({
     e.preventDefault();
     if (!selectedAnakId) return;
 
-    if (!namaAlergi || !jenisAlergi || !tingkatKeparahan || !gejala) {
+    if (!namaAlergen || !tingkatKeparahan) {
       alert("Mohon lengkapi semua field yang wajib");
       return;
     }
@@ -73,15 +66,13 @@ export default function AlergiFormModal({
     setLoading(true);
     try {
       const payload: CreateAlergiRequest = {
-        nama_alergi: namaAlergi,
-        jenis_alergi: jenisAlergi as JenisAlergi,
+        nama_alergen: namaAlergen,
         tingkat_keparahan: tingkatKeparahan as TingkatKeparahan,
-        gejala,
-        catatan,
+        deskripsi,
       };
 
       if (alergiToEdit) {
-        await alergiService.update(selectedAnakId, alergiToEdit.id_alergi, payload);
+        await alergiService.update(selectedAnakId, alergiToEdit.id, payload);
       } else {
         await alergiService.create(selectedAnakId, payload);
       }
@@ -108,39 +99,18 @@ export default function AlergiFormModal({
         </SheetHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-6">
           <div className="space-y-2">
-            <label htmlFor="nama_alergi" className="text-sm font-medium leading-none">
+            <label htmlFor="nama_alergen" className="text-sm font-medium leading-none">
               Nama Alergen <span className="text-red-500">*</span>
             </label>
             <input
-              id="nama_alergi"
+              id="nama_alergen"
               className={inputClass}
               placeholder="Contoh: Susu Sapi, Kacang, Paracetamol"
-              value={namaAlergi}
-              onChange={(e) => setNamaAlergi(e.target.value)}
+              value={namaAlergen}
+              onChange={(e) => setNamaAlergen(e.target.value)}
               disabled={loading}
               required
             />
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="jenis_alergi" className="text-sm font-medium leading-none">
-              Jenis Alergi <span className="text-red-500">*</span>
-            </label>
-            <select
-              id="jenis_alergi"
-              className={inputClass}
-              value={jenisAlergi}
-              onChange={(e) => setJenisAlergi(e.target.value as JenisAlergi)}
-              disabled={loading}
-              required
-            >
-              <option value="" disabled>Pilih jenis alergi</option>
-              <option value="makanan">Makanan</option>
-              <option value="obat">Obat-obatan</option>
-              <option value="lingkungan">Lingkungan</option>
-              <option value="serangga">Serangga</option>
-              <option value="lainnya">Lainnya</option>
-            </select>
           </div>
 
           <div className="space-y-2">
@@ -163,30 +133,15 @@ export default function AlergiFormModal({
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="gejala" className="text-sm font-medium leading-none">
-              Reaksi / Gejala <span className="text-red-500">*</span>
+            <label htmlFor="deskripsi" className="text-sm font-medium leading-none">
+              Gejala / Deskripsi Alergi
             </label>
             <textarea
-              id="gejala"
-              className="flex min-h-[80px] w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              placeholder="Contoh: Gatal-gatal, ruam merah, muntah"
-              value={gejala}
-              onChange={(e) => setGejala(e.target.value)}
-              disabled={loading}
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label htmlFor="catatan" className="text-sm font-medium leading-none">
-              Catatan Tambahan (Opsional)
-            </label>
-            <textarea
-              id="catatan"
-              className="flex min-h-[80px] w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              placeholder="Tambahkan catatan khusus jika ada"
-              value={catatan}
-              onChange={(e) => setCatatan(e.target.value)}
+              id="deskripsi"
+              className="flex min-h-[120px] w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="Contoh: Gatal-gatal, ruam merah, muntah. Tambahkan catatan khusus jika ada."
+              value={deskripsi}
+              onChange={(e) => setDeskripsi(e.target.value)}
               disabled={loading}
             />
           </div>

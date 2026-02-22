@@ -69,7 +69,7 @@ export default function GrowthStats() {
     : null;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
       {/* Tinggi Badan */}
       <div className="bg-blue-50 p-5 rounded-3xl border border-blue-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
         <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mb-3">
@@ -111,6 +111,22 @@ export default function GrowthStats() {
         </div>
         <div className="inline-flex items-center px-2 py-1 rounded-md bg-purple-200/50 text-xs font-semibold text-purple-700">
           {latestGrowth.lingkar_kepala_cm ? "Normal" : "Tidak Tercatat"}
+        </div>
+      </div>
+
+      {/* Lingkar Lengan Atas */}
+      <div className="bg-teal-50 p-5 rounded-3xl border border-teal-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+        <div className="w-10 h-10 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center mb-3">
+          <Ruler className="w-5 h-5" />
+        </div>
+        <div className="text-sm text-teal-600 font-bold mb-1">
+          Lingkar Lengan Atas
+        </div>
+        <div className="text-3xl font-[var(--font-display)] font-bold text-teal-800 mb-1">
+          {latestGrowth.lingkar_lengan_atas_cm || "-"} <span className="text-base font-normal opacity-70">cm</span>
+        </div>
+        <div className="inline-flex items-center px-2 py-1 rounded-md bg-teal-200/50 text-xs font-semibold text-teal-700">
+          {latestGrowth.lingkar_lengan_atas_cm ? "Normal" : "Tidak Tercatat"}
         </div>
       </div>
     </div>

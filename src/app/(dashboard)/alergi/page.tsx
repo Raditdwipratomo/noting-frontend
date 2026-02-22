@@ -16,7 +16,6 @@ export default function AlergiPage() {
   const [allergyList, setAllergyList] = useState<AlergiResponse[]>([]);
   const [summary, setSummary] = useState<AlergiSummaryResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const [filter, setFilter] = useState<string>("semua");
 
   // Modal actions
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -65,23 +64,13 @@ export default function AlergiPage() {
     setIsModalOpen(true);
   };
 
-  const filteredList =
-    filter === "semua"
-      ? allergyList
-      : allergyList.filter((a) => a.jenis_alergi === filter);
 
-  const filterButtons = [
-    { label: "Semua", value: "semua" },
-    { label: "Makanan", value: "makanan" },
-    { label: "Obat-obatan", value: "obat" },
-    { label: "Lingkungan", value: "lingkungan" },
-  ];
 
   return (
     <div className="w-full min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
       <DashboardHeader activePage="/alergi" />
 
-      <main className="flex-grow w-full max-w-screen mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-grow w-full max-w-screen mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-30">
         <div className="flex flex-col lg:flex-row gap-8">
           <section className="w-full lg:w-[65%] flex flex-col gap-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -102,22 +91,7 @@ export default function AlergiPage() {
               </Button>
             </div>
 
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-              {filterButtons.map((btn) => (
-                <Button
-                  key={btn.value}
-                  variant="outline"
-                  onClick={() => setFilter(btn.value)}
-                  className={
-                    filter === btn.value
-                      ? "rounded-lg text-sm font-medium border-primary text-primary hover:bg-primary/5"
-                      : "rounded-lg text-sm font-medium text-slate-500 hover:text-slate-700"
-                  }
-                >
-                  {btn.label}
-                </Button>
-              ))}
-            </div>
+
 
             {loading && (
               <div className="flex items-center justify-center py-16">
@@ -125,24 +99,22 @@ export default function AlergiPage() {
               </div>
             )}
 
-            {!loading && filteredList.length === 0 && (
+            {!loading && allergyList.length === 0 && (
               <div className="flex flex-col items-center justify-center py-16 text-gray-400 gap-3">
                 <ShieldAlert size={48} />
                 <span className="text-sm">
-                  {allergyList.length === 0
-                    ? "Belum ada data alergi. Tambahkan alergi pertama!"
-                    : "Tidak ada alergi untuk filter ini."}
+                  Belum ada data alergi. Tambahkan alergi pertama!
                 </span>
               </div>
             )}
 
             <div className="flex flex-col gap-4">
-              {filteredList.map((item) => (
+              {allergyList.map((item) => (
                 <AllergyItems
-                  key={item.id_alergi}
+                  key={item.id}
                   alergi={item}
                   onEdit={() => handleOpenEdit(item)}
-                  onDelete={() => handleDelete(item.id_alergi)}
+                  onDelete={() => handleDelete(item.id)}
                 />
               ))}
             </div>

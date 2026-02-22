@@ -18,7 +18,7 @@ interface NutritionStat {
   value: string;
   unit: string;
   subtext: string;
-  colorScheme: "blue" | "orange" | "purple" | "emerald";
+  colorScheme: "blue" | "orange" | "purple" | "emerald" | "teal";
 }
 
 const colorMap: Record<
@@ -52,6 +52,13 @@ const colorMap: Record<
     label: "text-emerald-600",
     value: "text-emerald-700",
     sub: "text-emerald-500",
+  },
+  teal: {
+    bg: "bg-teal-50",
+    border: "border-teal-100",
+    label: "text-teal-600",
+    value: "text-teal-800",
+    sub: "text-teal-500",
   },
 };
 
@@ -214,6 +221,17 @@ export default function ChildProfileCard() {
         colorScheme: "purple",
       });
     }
+    if (latestGrowth.lingkar_lengan_atas_cm) {
+      stats.push({
+        label: "Lingkar Lengan Atas",
+        value: String(latestGrowth.lingkar_lengan_atas_cm),
+        unit: "cm",
+        subtext: latestDiagnosa?.z_score_berat_tinggi
+          ? `Z-Score: ${parseFloat(latestDiagnosa.z_score_berat_tinggi).toFixed(1)} SD`
+          : "Normal",
+        colorScheme: "teal",
+      });
+    }
   }
 
   const statusStunting = latestDiagnosa?.status_stunting;
@@ -289,9 +307,39 @@ export default function ChildProfileCard() {
             </div>
 
             {latestDiagnosa?.rekomendasi_tindakan ? (
-              <p className="text-gray-600 text-sm mb-6 leading-relaxed">
-                {latestDiagnosa.rekomendasi_tindakan}
-              </p>
+              <div className="text-gray-600 text-sm mb-6 leading-relaxed">
+                {(() => {
+                  try {
+                    const parsed = JSON.parse(latestDiagnosa.rekomendasi_tindakan);
+                    return (
+                      <div className="space-y-3">
+                        {parsed.tindakan && parsed.tindakan.length > 0 && (
+                          <div>
+                            <span className="font-semibold text-gray-800">Tindakan:</span>
+                            <ul className="list-disc list-inside ml-2 mt-1 space-y-1">
+                              {parsed.tindakan.map((item: string, idx: number) => (
+                                <li key={idx}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {parsed.gizi && parsed.gizi.length > 0 && (
+                          <div>
+                            <span className="font-semibold text-gray-800">Gizi:</span>
+                            <ul className="list-disc list-inside ml-2 mt-1 space-y-1">
+                              {parsed.gizi.map((item: string, idx: number) => (
+                                <li key={idx}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  } catch {
+                    return <p>{latestDiagnosa.rekomendasi_tindakan}</p>;
+                  }
+                })()}
+              </div>
             ) : (
               <p className="text-gray-400 text-sm mb-6 italic">
                 Belum ada rekomendasi. Lakukan diagnosa terlebih dahulu.

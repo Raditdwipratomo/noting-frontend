@@ -1,15 +1,16 @@
 "use client";
 
-import { Loader2, TrendingUp, Target, Utensils } from "lucide-react";
-import type { GiziProgressResponse } from "@/lib/types/gizi.types";
+import { Loader2, TrendingUp, Target, Utensils, MessageSquareText } from "lucide-react";
+import type { GiziProgressResponse, RencanaGiziDetailResponse } from "@/lib/types/gizi.types";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface WeeklySummaryProps {
   progress: GiziProgressResponse | null;
+  rencana: RencanaGiziDetailResponse | null;
   loading: boolean;
 }
 
-export default function WeeklySummary({ progress, loading }: WeeklySummaryProps) {
+export default function WeeklySummary({ progress, rencana, loading }: WeeklySummaryProps) {
   if (loading) {
     return (
       <Card className="rounded-2xl border-gray-100 shadow-sm">
@@ -67,7 +68,7 @@ export default function WeeklySummary({ progress, loading }: WeeklySummaryProps)
       <h3 className="font-bold text-lg text-slate-800">Ringkasan</h3>
 
       {summaryCards.map((card) => (
-        <Card key={card.label} className="rounded-2xl border-gray-100 shadow-sm">
+        <Card key={card.label} className="rounded-2xl bg-white text-gray-800 border-gray-100 shadow-sm">
           <CardContent className="p-4 flex items-center gap-4">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center ${card.color}`}>
               <card.icon size={20} />
@@ -82,7 +83,7 @@ export default function WeeklySummary({ progress, loading }: WeeklySummaryProps)
       ))}
 
       {/* Daily progress breakdown */}
-      <Card className="rounded-2xl border-gray-100 shadow-sm">
+      <Card className="rounded-2xl border-gray-100 shadow-sm bg-white text-gray-800">
         <CardContent className="p-4">
           <h4 className="text-sm font-bold text-slate-700 mb-3">Progress Harian</h4>
           <div className="space-y-2">
@@ -110,6 +111,26 @@ export default function WeeklySummary({ progress, loading }: WeeklySummaryProps)
           </div>
         </CardContent>
       </Card>
+
+      {/* Catatan Khusus dari AI */}
+      {rencana?.catatan_khusus && rencana.catatan_khusus.length > 0 && (
+        <Card className="rounded-2xl border-gray-100 shadow-sm bg-white text-gray-800">
+          <CardContent className="p-4">
+            <h4 className="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+              <MessageSquareText size={16} className="text-primary" />
+              Catatan Khusus dari AI
+            </h4>
+            <ul className="space-y-2">
+              {rencana.catatan_khusus.map((catatan, index) => (
+                <li key={index} className="flex items-start gap-2.5 text-sm text-slate-600">
+                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
+                  {catatan}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

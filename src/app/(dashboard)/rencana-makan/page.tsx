@@ -29,6 +29,7 @@ export default function RencanaMakanPage() {
         giziService.getCurrentRencana(selectedAnakId),
         giziService.getProgress(selectedAnakId),
       ]);
+      console.log("rencana", rencanaData)
       setRencana(rencanaData.status === "fulfilled" ? rencanaData.value : null);
       setProgress(progressData.status === "fulfilled" ? progressData.value : null);
     } catch (err) {
@@ -56,15 +57,16 @@ export default function RencanaMakanPage() {
   };
 
   const dailyPlans = rencana?.rekomendasi_harian ?? [];
+  console.log("dailyPlans", dailyPlans, rencana);
   const dayNames = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 
   return (
     <div className="w-full max-w-screen bg-white shadow-2xl overflow-hidden border border-gray-200 min-h-screen flex flex-col">
       <DashboardHeader activePage="/rencana-makan" />
 
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto pt-20">
         <div className="max-w-screen mx-auto px-6 py-10">
-          <WeeklyOverview progress={progress} loading={loading} />
+          <WeeklyOverview progress={progress} rencana={rencana} loading={loading} />
 
           {loading && (
             <div className="flex items-center justify-center py-20">
@@ -139,8 +141,9 @@ export default function RencanaMakanPage() {
                         dayShort={dayShort}
                         status={status}
                         progressText={`${completedCount}/${totalCount} Selesai`}
-                        progressPercentage={plan.progress_harian}
+                        progressPercentage={totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0}
                         isToday={isToday(plan.tanggal)}
+                        hariKe={plan.hari_ke}
                       />
                     );
                   })}
@@ -149,7 +152,7 @@ export default function RencanaMakanPage() {
 
               {/* Right Column: Summary */}
               <div className="lg:w-[35%] space-y-6">
-                <WeeklySummary progress={progress} loading={loading} />
+                <WeeklySummary progress={progress} rencana={rencana} loading={loading} />
               </div>
             </div>
           )}

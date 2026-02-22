@@ -235,9 +235,43 @@ export default function DiagnosisCard() {
                   </span>
                 )}
               </div>
-              <p className="text-gray-600 leading-relaxed">
-                {diagnosa?.rekomendasi_tindakan ?? "Belum ada data diagnosa. Lakukan analisis stunting terlebih dahulu."}
-              </p>
+              <div className="text-gray-600 leading-relaxed">
+                {diagnosa?.rekomendasi_tindakan ? (
+                  (() => {
+                    try {
+                      const parsed = JSON.parse(diagnosa.rekomendasi_tindakan);
+                      return (
+                        <div className="space-y-3 mt-2">
+                          {parsed.tindakan && parsed.tindakan.length > 0 && (
+                            <div>
+                              <span className="font-semibold text-gray-800">Tindakan:</span>
+                              <ul className="list-disc list-inside ml-2 mt-1 space-y-1 text-sm">
+                                {parsed.tindakan.map((item: string, idx: number) => (
+                                  <li key={idx}>{item}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {parsed.gizi && parsed.gizi.length > 0 && (
+                            <div>
+                              <span className="font-semibold text-gray-800">Gizi:</span>
+                              <ul className="list-disc list-inside ml-2 mt-1 space-y-1 text-sm">
+                                {parsed.gizi.map((item: string, idx: number) => (
+                                  <li key={idx}>{item}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    } catch {
+                      return <p>{diagnosa.rekomendasi_tindakan}</p>;
+                    }
+                  })()
+                ) : (
+                  "Belum ada data diagnosa. Lakukan analisis stunting terlebih dahulu."
+                )}
+              </div>
             </div>
 
             {zScoreStats.length > 0 ? (

@@ -24,36 +24,68 @@ function buildRecommendations(diagnosa: DiagnosaResponseData | null): Recommenda
   const text = diagnosa.rekomendasi_tindakan;
   const recommendations: RecommendationItem[] = [];
 
-  // Split by numbered items or newlines to extract individual recommendations
-  const lines = text
-    .split(/\d+\.\s+|\n/)
-    .map((l) => l.trim())
-    .filter((l) => l.length > 10);
+  try {
+    const parsed = JSON.parse(text);
+    let idx = 0;
+    if (parsed.tindakan && Array.isArray(parsed.tindakan)) {
+      parsed.tindakan.forEach((item: string) => {
+        recommendations.push({
+          id: `tindakan-${idx}`,
+          icon: "medical_services",
+          iconBg: "bg-primary",
+          title: "Tindakan",
+          description: item,
+          variant: "primary",
+        });
+        idx++;
+      });
+    }
+    if (parsed.gizi && Array.isArray(parsed.gizi)) {
+      parsed.gizi.forEach((item: string) => {
+        recommendations.push({
+          id: `gizi-${idx}`,
+          icon: "restaurant",
+          iconBg: "bg-emerald-500",
+          title: "Gizi",
+          description: item,
+          variant: "default",
+        });
+        idx++;
+      });
+    }
+    return recommendations;
+  } catch {
+    // Split by numbered items or newlines to extract individual recommendations
+    const lines = text
+      .split(/\d+\.\s+|\n/)
+      .map((l) => l.trim())
+      .filter((l) => l.length > 10);
 
-  lines.forEach((line, idx) => {
-    recommendations.push({
-      id: String(idx),
-      icon: idx === 0 ? "egg_alt" : idx === 1 ? "bedtime" : "fitness_center",
-      iconBg: idx % 2 === 0 ? "bg-primary" : "bg-secondary",
-      title: line.length > 50 ? line.slice(0, 50) + "..." : line,
-      description: line,
-      variant: idx === 0 ? "primary" : "default",
+    lines.forEach((line, idx) => {
+      recommendations.push({
+        id: String(idx),
+        icon: idx === 0 ? "egg_alt" : idx === 1 ? "bedtime" : "fitness_center",
+        iconBg: idx % 2 === 0 ? "bg-primary" : "bg-secondary",
+        title: line.length > 50 ? line.slice(0, 50) + "..." : line,
+        description: line,
+        variant: idx === 0 ? "primary" : "default",
+      });
     });
-  });
 
-  // If no lines extracted, show the full text as one recommendation
-  if (recommendations.length === 0 && text.length > 5) {
-    recommendations.push({
-      id: "0",
-      icon: "egg_alt",
-      iconBg: "bg-primary",
-      title: "Rekomendasi",
-      description: text,
-      variant: "primary",
-    });
+    // If no lines extracted, show the full text as one recommendation
+    if (recommendations.length === 0 && text.length > 5) {
+      recommendations.push({
+        id: "0",
+        icon: "egg_alt",
+        iconBg: "bg-primary",
+        title: "Rekomendasi",
+        description: text,
+        variant: "primary",
+      });
+    }
+
+    return recommendations.slice(0, 3); // Max 3 items
   }
-
-  return recommendations.slice(0, 3); // Max 3 items
 }
 
 export default function AIRecommendations() {

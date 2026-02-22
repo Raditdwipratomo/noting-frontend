@@ -169,7 +169,7 @@ function ChecklistItemCard({
             </div>
           ) : (
             <div
-              onClick={() => onToggle(item.id_detail_makanan, item.status_konsumsi)}
+              onClick={() => onToggle(item.id_detail, item.status_konsumsi)}
               className="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0 mt-0.5 cursor-pointer hover:border-primary hover:bg-primary/10 transition-colors"
             />
           )}
@@ -184,7 +184,7 @@ function ChecklistItemCard({
               {item.nama_makanan}
             </h5>
             <p className="text-xs text-gray-500">
-              {item.porsi} • {item.kalori} kkal
+              {item.porsi}{item.nutrisi_makanan ? ` • ${item.nutrisi_makanan.kalori_total} kkal` : ""}
             </p>
           </div>
 
@@ -202,7 +202,7 @@ function ChecklistItemCard({
             <Button
               size="icon"
               className="h-8 w-8 rounded-full bg-primary hover:bg-teal-600 shadow-md"
-              onClick={() => onToggle(item.id_detail_makanan, item.status_konsumsi)}
+              onClick={() => onToggle(item.id_detail, item.status_konsumsi)}
             >
               <Check size={14} />
             </Button>
@@ -256,13 +256,13 @@ export default function DailyChecklist() {
 
   // Calculate calorie stats from today's food items
   const items = todayData?.detail_makanan_harian ?? [];
-  const totalCalorie = items.reduce((sum, item) => sum + (item.kalori || 0), 0);
+  const totalCalorie = items.reduce((sum, item) => sum + (item.nutrisi_makanan?.kalori_total || 0), 0);
   const consumedCalorie = items
     .filter((item) => item.status_konsumsi)
-    .reduce((sum, item) => sum + (item.kalori || 0), 0);
+    .reduce((sum, item) => sum + (item.nutrisi_makanan?.kalori_total || 0), 0);
 
   return (
-    <div className="w-full lg:w-[35%] bg-white border-l border-gray-200 p-6 flex flex-col h-[90vh] overflow-y-auto">
+    <div className="w-full lg:w-[35%] bg-white border-l border-gray-200 p-6 flex flex-col h-full overflow-y-auto hide-scroll">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h3 className="font-[var(--font-display)] font-bold text-lg text-gray-800">
@@ -328,7 +328,7 @@ export default function DailyChecklist() {
           <div className="space-y-6">
             {items.map((item) => (
               <ChecklistItemCard
-                key={item.id_detail_makanan}
+                key={item.id_detail}
                 item={item}
                 onToggle={handleToggle}
               />

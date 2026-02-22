@@ -304,7 +304,7 @@ export const ROUTES = {
     LIST: (anakId: number) => `/anak/${anakId}/gizi`,
     DETAIL: (anakId: number, id: number) => `/anak/${anakId}/gizi/${id}`,
   },
-  PROFILE: "/profile",
+  PROFILE: "/profile-anak",
 } as const;
 
 export const apiRoutes = {
@@ -390,8 +390,12 @@ export const apiRoutes = {
 
         PROGRESS: (anakId: number | string) =>
           `/api/anak/${anakId}/gizi/progress`,
+        GET_MAKANAN: (anakId: number | string, detailId: number | string) =>
+          `/api/anak/${anakId}/gizi/makanan/${detailId}`,
         UPDATE_MAKANAN: (anakId: number | string, detailId: number | string) =>
           `/api/anak/${anakId}/gizi/makanan/${detailId}`,
+        UPLOAD_IMAGE: (anakId: number | string, detailId: number | string) =>
+          `/api/anak/${anakId}/gizi/makanan/${detailId}/image`,
       },
 
       /* ===================== */

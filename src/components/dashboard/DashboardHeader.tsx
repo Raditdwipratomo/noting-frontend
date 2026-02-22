@@ -9,6 +9,7 @@ import {
   Baby,
   ShieldAlert,
   LogOut,
+  FileEdit,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,7 +20,7 @@ const navItems = [
   { label: "Beranda", icon: LayoutDashboard, href: "/dashboard" },
   { label: "Pertumbuhan", icon: TrendingUp, href: "/pertumbuhan" },
   { label: "Rencana Makan", icon: UtensilsCrossed, href: "/rencana-makan" },
-  { label: "Profile Anak", icon: Baby, href: "/profile" },
+  { label: "Profile Anak", icon: Baby, href: "/profile-anak" },
   { label: "Alergi", icon: ShieldAlert, href: "/alergi" },
 ];
 
@@ -42,7 +43,7 @@ export default function DashboardHeader({
     : "U";
 
   return (
-    <header className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky top-0 z-20">
+    <header className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between fixed w-screen top-0 z-20">
       {/* Logo */}
       <div className="flex items-center gap-2">
         <div className="w-10 h-10 bg-gradient-to-tr from-primary to-emerald-400 rounded-xl flex items-center justify-center text-white font-[var(--font-display)] font-bold text-xl shadow-lg shadow-primary/30">
@@ -56,7 +57,10 @@ export default function DashboardHeader({
       {/* Navigation */}
       <nav className="hidden md:flex items-center gap-1 bg-gray-50 p-1.5 rounded-full border border-gray-100">
         {navItems.map((item) => {
-          const isActive = item.href === activePage;
+          const isActive =
+            item.href === "/dashboard"
+              ? activePage === "/dashboard"
+              : activePage?.startsWith(item.href);
           return (
             <Link
               key={item.label}

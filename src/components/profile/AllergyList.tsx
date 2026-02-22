@@ -79,7 +79,7 @@ export default function AllergyList() {
               >
                 <span className={cn("w-2 h-2 rounded-full", config.dot)}></span>
                 <span className={cn("text-sm font-bold", config.text)}>
-                  {alergi.nama_alergi}
+                  {alergi.nama_alergen}
                 </span>
                 <span className={cn("text-xs ml-1 opacity-70", config.text)}>
                   {config.label}

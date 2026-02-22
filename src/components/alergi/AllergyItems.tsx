@@ -24,13 +24,13 @@ export default function AllergyItems({ alergi, onEdit, onDelete }: AllergyItemsP
   const updatedAgo = getTimeAgo(alergi.updated_at);
 
   return (
-    <Card className="rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+    <Card className="rounded-2xl bg-white text-gray-800 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
       <CardContent className="p-5">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
               <h3 className="font-bold text-lg text-slate-900">
-                {alergi.nama_alergi}
+                {alergi.nama_alergen}
               </h3>
               <Badge
                 variant="outline"
@@ -41,17 +41,10 @@ export default function AllergyItems({ alergi, onEdit, onDelete }: AllergyItemsP
             </div>
 
             <p className="text-sm text-slate-600 mb-2">
-              <strong>Gejala:</strong> {alergi.gejala || "Tidak ada informasi"}
+              <strong>Gejala/Reaksi:</strong> {alergi.deskripsi || "Tidak ada informasi detail"}
             </p>
 
-            {alergi.catatan && (
-              <p className="text-sm text-slate-500 italic">
-                {alergi.catatan}
-              </p>
-            )}
-
             <div className="flex items-center gap-4 mt-3 text-xs text-slate-400">
-              <span>Jenis: {alergi.jenis_alergi}</span>
               <span>Diupdate: {updatedAgo}</span>
             </div>
           </div>

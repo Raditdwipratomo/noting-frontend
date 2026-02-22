@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import Link from "next/link";
 
 export type DailyPlanStatus = "Selesai" | "Aktif" | "Belum Dimulai";
 
@@ -23,6 +24,7 @@ interface DailyPlanCardProps {
   progressText: string;
   progressPercentage: number;
   isToday?: boolean;
+  hariKe: number;
 }
 
 export default function DailyPlanCard({
@@ -33,6 +35,7 @@ export default function DailyPlanCard({
   progressText,
   progressPercentage,
   isToday = false,
+  hariKe,
 }: DailyPlanCardProps) {
   // Styles based on status
   const cardStyle = isToday
@@ -65,6 +68,7 @@ export default function DailyPlanCard({
       : "bg-slate-300";
 
   return (
+    <Link href={`/rencana-makan/hari/${hariKe}`}>
     <Card className={cn("shadow-sm outline-none bg-white text-gray-800", cardStyle)}>
       <CardContent className="p-5">
         {isToday && (
@@ -118,5 +122,6 @@ export default function DailyPlanCard({
         </div>
       </CardContent>
     </Card>
+    </Link>
   );
 }
