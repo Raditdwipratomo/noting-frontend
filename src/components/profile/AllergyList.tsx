@@ -74,7 +74,7 @@ export default function AllergyList() {
             const config = severityConfig[alergi.tingkat_keparahan] || severityConfig.ringan;
             return (
               <div
-                key={alergi.id_alergi}
+                key={alergi.id}
                 className={cn("flex items-center gap-2 px-4 py-2 border rounded-xl", config.bg)}
               >
                 <span className={cn("w-2 h-2 rounded-full", config.dot)}></span>
