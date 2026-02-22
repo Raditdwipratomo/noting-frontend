@@ -87,6 +87,8 @@ class AnakService {
       throw new AnakServiceError("Data anak tidak boleh kosong");
     }
 
+    console.log("data anak", data);
+
     try {
       const response = await apiClient.post<ApiResponse<CreateAnakResponse>>(
         apiRoutes.API.ANAK.CREATE,

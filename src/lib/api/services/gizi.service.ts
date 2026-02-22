@@ -1,10 +1,10 @@
 import apiClient from "../client";
 import type { ApiResponse } from "@/lib/types";
 import {
-  RencanaGiziResponse,
   RencanaGiziDetailResponse,
   RencanaGiziHistoryResponse,
   RekomendasiHarian,
+  DetailMakananHarian,
   GiziProgressResponse,
   UpdateMakananStatusRequest,
   UpdateMakananStatusResponse,
@@ -110,13 +110,13 @@ class GiziService {
    * POST /api/anak/:anakId/gizi/rencana/generate
    * Generate new AI weekly nutrition plan
    */
-  async generateRencana(anakId: number): Promise<RencanaGiziResponse> {
+  async generateRencana(anakId: number): Promise<any> {
     if (!anakId || anakId <= 0) {
       throw new GiziServiceError("ID anak tidak valid");
     }
 
     try {
-      const response = await apiClient.post<ApiResponse<RencanaGiziResponse>>(
+      const response = await apiClient.post<ApiResponse<any>>(
         apiRoutes.API.ANAK.GIZI.RENCANA.GENERATE(anakId),
       );
 
@@ -367,6 +367,85 @@ class GiziService {
       handleServiceError(
         error,
         `updateMakananStatus(anakId: ${anakId}, detailId: ${detailId})`,
+      );
+    }
+  }
+
+  /**
+   * GET /api/anak/:anakId/gizi/makanan/:detailId
+   * Get specific Detail Makanan Harian
+   */
+  async getDetailMakanan(
+    anakId: number,
+    detailId: number,
+  ): Promise<DetailMakananHarian> {
+    if (!anakId || anakId <= 0) {
+      throw new GiziServiceError("ID anak tidak valid");
+    }
+    if (!detailId || detailId <= 0) {
+      throw new GiziServiceError("ID detail makanan tidak valid");
+    }
+
+    try {
+      const response = await apiClient.get<ApiResponse<DetailMakananHarian>>(
+        apiRoutes.API.ANAK.GIZI.GET_MAKANAN(anakId, detailId),
+      );
+
+      if (!response.data?.data) {
+        throw new GiziServiceError("Detail makanan tidak ditemukan");
+      }
+
+      return response.data.data;
+    } catch (error) {
+      if (error instanceof GiziServiceError) throw error;
+      handleServiceError(
+        error,
+        `getDetailMakanan(anakId: ${anakId}, detailId: ${detailId})`,
+      );
+    }
+  }
+
+  /**
+   * POST /api/anak/:anakId/gizi/makanan/:detailId/image
+   * Upload food image for a specific meal
+   */
+  async uploadFoodImage(
+    anakId: number,
+    detailId: number,
+    file: File,
+  ): Promise<{ detail_id: number; gambar_url: string }> {
+    if (!anakId || anakId <= 0) {
+      throw new GiziServiceError("ID anak tidak valid");
+    }
+    if (!detailId || detailId <= 0) {
+      throw new GiziServiceError("ID detail makanan tidak valid");
+    }
+    if (!file) {
+      throw new GiziServiceError("File gambar tidak boleh kosong");
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const response = await apiClient.post<
+        ApiResponse<{ detail_id: number; gambar_url: string }>
+      >(apiRoutes.API.ANAK.GIZI.UPLOAD_IMAGE(anakId, detailId), formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (!response.data?.data) {
+        throw new GiziServiceError("Gagal mengunggah gambar makanan");
+      }
+
+      return response.data.data;
+    } catch (error) {
+      if (error instanceof GiziServiceError) throw error;
+      handleServiceError(
+        error,
+        `uploadFoodImage(anakId: ${anakId}, detailId: ${detailId})`,
       );
     }
   }

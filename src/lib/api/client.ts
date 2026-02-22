@@ -11,7 +11,7 @@ import axios, {
 // ============================================
 
 const API_CONFIG = {
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000",
+  baseURL: process.env.NEXT_PUBLIC_API_GATEWAY_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000",
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",

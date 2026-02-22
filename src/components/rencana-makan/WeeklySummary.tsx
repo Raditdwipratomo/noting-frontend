@@ -1,110 +1,136 @@
 "use client";
 
+import { Loader2, TrendingUp, Target, Utensils, MessageSquareText } from "lucide-react";
+import type { GiziProgressResponse, RencanaGiziDetailResponse } from "@/lib/types/gizi.types";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2, CircleDashed, Trophy } from "lucide-react";
-import { RadialBarChart, RadialBar, ResponsiveContainer, PolarAngleAxis } from "recharts";
 
-export default function WeeklySummary() {
-  const percentage = 49;
-  const data = [{ name: "Progress", value: percentage, fill: "var(--primary)" }];
+interface WeeklySummaryProps {
+  progress: GiziProgressResponse | null;
+  rencana: RencanaGiziDetailResponse | null;
+  loading: boolean;
+}
+
+export default function WeeklySummary({ progress, rencana, loading }: WeeklySummaryProps) {
+  if (loading) {
+    return (
+      <Card className="rounded-2xl border-gray-100 shadow-sm">
+        <CardContent className="p-6 flex items-center justify-center">
+          <Loader2 size={24} className="animate-spin text-gray-400" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!progress) {
+    return (
+      <Card className="rounded-2xl border-gray-100 shadow-sm">
+        <CardContent className="p-6 text-center text-gray-400 text-sm">
+          Belum ada data ringkasan
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const daily = progress.daily_progress ?? [];
+  const completedDays = daily.filter((d) => d.status === "selesai").length;
+  const inProgressDays = daily.filter((d) => d.status === "sedang_berjalan").length;
+  const totalDays = daily.length;
+
+  const summaryCards = [
+    {
+      icon: Target,
+      label: "Target Mingguan",
+      value: `${progress.overall_percentage}%`,
+      sub: progress.overall_progress,
+      color: "text-primary bg-primary/10",
+    },
+    {
+      icon: TrendingUp,
+      label: "Hari Selesai",
+      value: `${completedDays}/${totalDays}`,
+      sub: `${inProgressDays} sedang berjalan`,
+      color: "text-emerald-600 bg-emerald-50",
+    },
+    {
+      icon: Utensils,
+      label: "Rata-rata Progress",
+      value:
+        daily.length > 0
+          ? `${Math.round(daily.reduce((s, d) => s + d.percentage, 0) / daily.length)}%`
+          : "0%",
+      sub: "Per hari",
+      color: "text-amber-600 bg-amber-50",
+    },
+  ];
 
   return (
-    <Card className="rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center text-center sticky top-28">
-      <CardContent className="p-8 w-full bg-white text-gray-800">
-        <h3 className="text-lg font-bold text-slate-800 mb-6">Ringkasan Mingguan</h3>
-        <div className="relative flex items-center justify-center mb-6 h-48 w-48 mx-auto">
-          <ResponsiveContainer width="100%" height="100%">
-            <RadialBarChart
-              cx="50%"
-              cy="50%"
-              innerRadius="85%"
-              outerRadius="100%"
-              barSize={12}
-              data={data}
-              startAngle={90}
-              endAngle={-270}
-            >
-              <PolarAngleAxis
-                type="number"
-                domain={[0, 100]}
-                angleAxisId={0}
-                tick={false}
-              />
-              <RadialBar
-                background={{ fill: "#f1f5f9" }}
-                dataKey="value"
-                cornerRadius={10}
-              />
-            </RadialBarChart>
-          </ResponsiveContainer>
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-4xl font-black text-slate-900">{percentage}%</span>
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-widest mt-1">
-              Selesai
-            </span>
-          </div>
-        </div>
-        <div className="w-full space-y-4">
-          <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100 flex justify-between items-center">
-            <div className="text-left">
-              <span className="block text-[10px] font-bold text-emerald-700 uppercase">
-                Tercapai
-              </span>
-              <span className="text-xl font-bold text-emerald-800">24</span>
-              <span className="text-xs text-emerald-600 font-medium ml-1">Menu</span>
+    <div className="space-y-4">
+      <h3 className="font-bold text-lg text-slate-800">Ringkasan</h3>
+
+      {summaryCards.map((card) => (
+        <Card key={card.label} className="rounded-2xl bg-white text-gray-800 border-gray-100 shadow-sm">
+          <CardContent className="p-4 flex items-center gap-4">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${card.color}`}>
+              <card.icon size={20} />
             </div>
-            <CheckCircle2 className="text-emerald-500 w-8 h-8" />
-          </div>
-          <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 flex justify-between items-center">
-            <div className="text-left">
-              <span className="block text-[10px] font-bold text-slate-600 uppercase">
-                Sisa Target
-              </span>
-              <span className="text-xl font-bold text-slate-800">25</span>
-              <span className="text-xs text-slate-500 font-medium ml-1">Menu</span>
+            <div className="flex-1">
+              <p className="text-xs text-slate-500">{card.label}</p>
+              <p className="font-bold text-lg text-slate-800">{card.value}</p>
+              <p className="text-xs text-slate-400">{card.sub}</p>
             </div>
-            <CircleDashed className="text-slate-400 w-8 h-8" />
+          </CardContent>
+        </Card>
+      ))}
+
+      {/* Daily progress breakdown */}
+      <Card className="rounded-2xl border-gray-100 shadow-sm bg-white text-gray-800">
+        <CardContent className="p-4">
+          <h4 className="text-sm font-bold text-slate-700 mb-3">Progress Harian</h4>
+          <div className="space-y-2">
+            {daily.map((day) => {
+              const date = new Date(day.tanggal);
+              const dayLabel = date.toLocaleDateString("id-ID", {
+                weekday: "short",
+                day: "numeric",
+              });
+              return (
+                <div key={day.hari_ke} className="flex items-center gap-3">
+                  <span className="text-xs text-slate-500 w-16">{dayLabel}</span>
+                  <div className="flex-1 bg-gray-100 rounded-full h-2">
+                    <div
+                      className="bg-primary h-2 rounded-full transition-all"
+                      style={{ width: `${day.percentage}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-bold text-slate-600 w-10 text-right">
+                    {day.percentage}%
+                  </span>
+                </div>
+              );
+            })}
           </div>
-        </div>
-        <div className="mt-8 pt-6 border-t border-slate-50 w-full text-left">
-          <h4 className="font-bold text-slate-800 text-sm mb-3">
-            Statistik Nutrisi Minggu Ini
-          </h4>
-          <div className="space-y-3">
-            <div>
-              <div className="flex justify-between text-[10px] font-bold mb-1">
-                <span className="text-slate-500">Kebutuhan Energi</span>
-                <span className="text-slate-900">7.350 / 10.850 kkal</span>
-              </div>
-              <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-blue-500 rounded-full"
-                  style={{ width: "67%" }}
-                ></div>
-              </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-[10px] font-bold mb-1">
-                <span className="text-slate-500">Target Protein</span>
-                <span className="text-slate-900">175g / 245g</span>
-              </div>
-              <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-orange-500 rounded-full"
-                  style={{ width: "71%" }}
-                ></div>
-              </div>
-            </div>
-          </div>
-          <div className="mt-6 p-4 bg-teal-50 rounded-xl border border-teal-100 flex gap-3 items-start">
-            <Trophy className="text-teal-600 w-6 h-6 shrink-0" />
-            <p className="text-xs text-teal-800 leading-relaxed font-medium">
-              Minggu yang luar biasa! Kamu sudah menyelesaikan hampir 50% rencana
-              gizi. Terus konsisten untuk cegah stunting!
-            </p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      {/* Catatan Khusus dari AI */}
+      {rencana?.catatan_khusus && rencana.catatan_khusus.length > 0 && (
+        <Card className="rounded-2xl border-gray-100 shadow-sm bg-white text-gray-800">
+          <CardContent className="p-4">
+            <h4 className="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
+              <MessageSquareText size={16} className="text-primary" />
+              Catatan Khusus dari AI
+            </h4>
+            <ul className="space-y-2">
+              {rencana.catatan_khusus.map((catatan, index) => (
+                <li key={index} className="flex items-start gap-2.5 text-sm text-slate-600">
+                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
+                  {catatan}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+    </div>
   );
 }

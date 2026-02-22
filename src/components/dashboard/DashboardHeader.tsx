@@ -8,8 +8,10 @@ import {
   Bell,
   Baby,
   ShieldAlert,
+  LogOut,
+  FileEdit,
 } from "lucide-react";
-import { userProfile } from "@/lib/data/dashboard-data";
+import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -18,7 +20,7 @@ const navItems = [
   { label: "Beranda", icon: LayoutDashboard, href: "/dashboard" },
   { label: "Pertumbuhan", icon: TrendingUp, href: "/pertumbuhan" },
   { label: "Rencana Makan", icon: UtensilsCrossed, href: "/rencana-makan" },
-  { label: "Profile Anak", icon: Baby, href: "/profile" },
+  { label: "Profile Anak", icon: Baby, href: "/profile-anak" },
   { label: "Alergi", icon: ShieldAlert, href: "/alergi" },
 ];
 
@@ -29,8 +31,19 @@ interface DashboardHeaderProps {
 export default function DashboardHeader({
   activePage = "/dashboard",
 }: DashboardHeaderProps) {
+  const { user, logout } = useAuth();
+
+  const initials = user?.nama_lengkap
+    ? user.nama_lengkap
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : "U";
+
   return (
-    <header className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky top-0 z-20">
+    <header className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between fixed w-screen top-0 z-20">
       {/* Logo */}
       <div className="flex items-center gap-2">
         <div className="w-10 h-10 bg-gradient-to-tr from-primary to-emerald-400 rounded-xl flex items-center justify-center text-white font-[var(--font-display)] font-bold text-xl shadow-lg shadow-primary/30">
@@ -44,7 +57,10 @@ export default function DashboardHeader({
       {/* Navigation */}
       <nav className="hidden md:flex items-center gap-1 bg-gray-50 p-1.5 rounded-full border border-gray-100">
         {navItems.map((item) => {
-          const isActive = item.href === activePage;
+          const isActive =
+            item.href === "/dashboard"
+              ? activePage === "/dashboard"
+              : activePage?.startsWith(item.href);
           return (
             <Link
               key={item.label}
@@ -73,10 +89,28 @@ export default function DashboardHeader({
           <Bell size={20} />
           <span className="absolute top-2 right-2 w-2 h-2 bg-secondary rounded-full border-2 border-white" />
         </Button>
-        <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
-          <AvatarImage src={userProfile.photo} alt="Foto Profil Bunda" className="object-cover" />
-          <AvatarFallback>B</AvatarFallback>
-        </Avatar>
+
+        <div className="flex items-center gap-2">
+          <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
+            <AvatarImage src="" alt={user?.nama_lengkap ?? "User"} className="object-cover" />
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+          {user && (
+            <span className="text-sm font-medium text-gray-700 hidden lg:block">
+              {user.nama_lengkap}
+            </span>
+          )}
+        </div>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={logout}
+          className="rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50"
+          title="Logout"
+        >
+          <LogOut size={18} />
+        </Button>
       </div>
     </header>
   );

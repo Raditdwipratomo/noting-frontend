@@ -19,42 +19,10 @@ export default function ImmunizationHistory() {
         </Button>
       </div>
 
-      <div className="space-y-3">
-        {/* Item 1 */}
-        <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-              <Check className="w-4 h-4" />
-            </div>
-            <div>
-              <h4 className="font-bold text-sm text-slate-800">DPT-HB-Hib 3</h4>
-              <p className="text-xs text-slate-500">
-                Puskesmas Melati • 2 Bulan lalu
-              </p>
-            </div>
-          </div>
-          <span className="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-1 rounded">
-            Lengkap
-          </span>
-        </div>
-
-        {/* Item 2 */}
-        <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-              <Check className="w-4 h-4" />
-            </div>
-            <div>
-              <h4 className="font-bold text-sm text-slate-800">Polio 4</h4>
-              <p className="text-xs text-slate-500">
-                Puskesmas Melati • 2 Bulan lalu
-              </p>
-            </div>
-          </div>
-          <span className="text-xs font-semibold bg-emerald-100 text-emerald-700 px-2 py-1 rounded">
-            Lengkap
-          </span>
-        </div>
+      <div className="flex flex-col items-center justify-center p-6 bg-slate-50 rounded-xl text-center border border-dashed border-slate-200">
+        <Syringe className="w-8 h-8 text-slate-300 mb-2" />
+        <p className="text-sm font-medium text-slate-500">Belum ada riwayat imunisasi.</p>
+        <p className="text-xs text-slate-400 mt-1">Fitur pendataan imunisasi akan segera hadir.</p>
       </div>
     </div>
   );

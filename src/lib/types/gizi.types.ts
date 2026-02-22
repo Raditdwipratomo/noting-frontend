@@ -11,18 +11,45 @@ export type StatusRekomendasi = "belum_dimulai" | "sedang_berjalan" | "selesai";
 /* Detail Makanan        */
 /* ===================== */
 
-export interface DetailMakananHarian {
+export interface ResepMakananData {
+  id_resep: number;
   id_detail_makanan: number;
+  waktu_persiapan: number;
+  waktu_memasak: number;
+  bahan_bahan: string[];
+  langkah_pembuatan: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface NutrisiMakananData {
+  id_nutrisi: number;
+  id_detail_makanan: number;
+  kalori_total: number;
+  protein_gram: number;
+  lemak_gram: number;
+  karbohidrat_gram: number;
+  kalsium_mg?: number;
+  zat_besi_mg?: number;
+  zinc_mg?: number;
+  vitamin_a_iu?: number;
+  vitamin_d_iu?: number;
+  vitamin_c_mg?: number;
+  catatan?: string | null;
+}
+
+export interface DetailMakananHarian {
+  id_detail: number;
   id_rekomendasi_harian: number;
+  urutan_makanan: number;
+  waktu_makan: string;
   nama_makanan: string;
   porsi: string;
-  kalori: number;
-  protein_g: number;
-  karbohidrat_g: number;
-  lemak_g: number;
+  target_kalori: number;
   status_konsumsi: boolean;
-  waktu_makan: string;
-  catatan?: string | null;
+  nutrisi_makanan?: NutrisiMakananData | null;
+  resep_makanan?: ResepMakananData | null;
+  gambar_url?: string | null;
 }
 
 /* ===================== */
@@ -41,38 +68,24 @@ export interface RekomendasiHarian {
 }
 
 /* ===================== */
-/* Rencana Gizi          */
+/* Kebutuhan Nutrisi AI  */
 /* ===================== */
 
-export interface KebutuhanNutrisi {
-  protein_g: number;
-  karbohidrat_g: number;
-  lemak_g: number;
-  serat_g: number;
+export interface KebutuhanNutrisiAI {
+  protein_gram: number;
+  lemak_persen: number;
+  karbohidrat_persen: number;
   kalsium_mg: number;
   zat_besi_mg: number;
+  zinc_mg: number;
+  vitamin_a_mcg: number;
+  vitamin_d_mcg: number;
+  vitamin_c_mg: number;
 }
 
-export interface MenuHarian {
-  hari_ke: number;
-  tanggal: string;
-  sarapan: string[];
-  makan_siang: string[];
-  makan_malam: string[];
-  snack: string[];
-  total_kalori: number;
-}
-
-export interface RencanaGiziResponse {
-  rencana_id: number;
-  minggu_ke: number;
-  tanggal_mulai: string;
-  tanggal_selesai: string;
-  kebutuhan_kalori: number;
-  kebutuhan_nutrisi: KebutuhanNutrisi;
-  catatan_khusus: string[];
-  menu_mingguan: MenuHarian[];
-}
+/* ===================== */
+/* Rencana Gizi          */
+/* ===================== */
 
 export interface RencanaGiziDetailResponse {
   id_rencana: number;
@@ -81,6 +94,9 @@ export interface RencanaGiziDetailResponse {
   tanggal_mulai: string;
   tanggal_selesai: string;
   is_completed: boolean;
+  kebutuhan_kalori_harian: number | null;
+  kebutuhan_nutrisi: KebutuhanNutrisiAI | null;
+  catatan_khusus: string[] | null;
   created_at: string;
   updated_at: string;
   rekomendasi_harian: RekomendasiHarian[];

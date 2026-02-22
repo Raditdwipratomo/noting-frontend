@@ -1,103 +1,91 @@
 "use client";
 
-import { Edit2, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
+import type { AlergiResponse } from "@/lib/types/alergi.types";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export type AllergySeverity = "Berat" | "Sedang" | "Ringan";
+const severityConfig = {
+  berat: { label: "Berat", color: "bg-red-100 text-red-700 border-red-200", dot: "bg-red-500" },
+  sedang: { label: "Sedang", color: "bg-amber-100 text-amber-700 border-amber-200", dot: "bg-amber-500" },
+  ringan: { label: "Ringan", color: "bg-blue-100 text-blue-700 border-blue-200", dot: "bg-blue-500" },
+};
 
-interface AllergyItemProps {
-  title: string;
-  severity: AllergySeverity;
-  reaction: string;
-  notes: string;
-  lastUpdated: string;
-  icon: React.ReactNode;
-  colorTheme: "red" | "amber" | "blue";
+interface AllergyItemsProps {
+  alergi: AlergiResponse;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-export default function AllergyItems({
-  title,
-  severity,
-  reaction,
-  notes,
-  lastUpdated,
-  icon,
-  colorTheme,
-}: AllergyItemProps) {
-  const themes = {
-    red: {
-      bg: "bg-red-50 text-red-500",
-      badge: "bg-red-100 text-red-700 border-red-200",
-      dot: "bg-red-600",
-    },
-    amber: {
-      bg: "bg-amber-50 text-amber-500",
-      badge: "bg-amber-100 text-amber-700 border-amber-200",
-      dot: "bg-amber-600",
-    },
-    blue: {
-      bg: "bg-blue-50 text-blue-500",
-      badge: "bg-blue-100 text-blue-700 border-blue-200",
-      dot: "bg-blue-600",
-    },
-  };
-
-  const theme = themes[colorTheme];
+export default function AllergyItems({ alergi, onEdit, onDelete }: AllergyItemsProps) {
+  const severity = severityConfig[alergi.tingkat_keparahan] ?? severityConfig.ringan;
+  const updatedAgo = getTimeAgo(alergi.updated_at);
 
   return (
-    <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow flex flex-col sm:flex-row gap-5">
-      <div className="shrink-0">
-        <div
-          className={cn(
-            "w-14 h-14 rounded-full flex items-center justify-center",
-            theme.bg
-          )}
-        >
-          {icon}
-        </div>
-      </div>
-      <div className="flex-grow flex flex-col gap-2">
+    <Card className="rounded-2xl bg-white text-gray-800 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+      <CardContent className="p-5">
         <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <h3 className="text-lg font-bold text-slate-800">{title}</h3>
-            <Badge
-              variant="outline"
-              className={cn("gap-1.5 px-2.5 py-0.5", theme.badge)}
-            >
-              <span className={cn("w-1.5 h-1.5 rounded-full", theme.dot)}></span>
-              {severity}
-            </Badge>
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-2">
+              <h3 className="font-bold text-lg text-slate-900">
+                {alergi.nama_alergen}
+              </h3>
+              <Badge
+                variant="outline"
+                className={cn("text-xs font-bold rounded-full px-3", severity.color)}
+              >
+                {severity.label}
+              </Badge>
+            </div>
+
+            <p className="text-sm text-slate-600 mb-2">
+              <strong>Gejala/Reaksi:</strong> {alergi.deskripsi || "Tidak ada informasi detail"}
+            </p>
+
+            <div className="flex items-center gap-4 mt-3 text-xs text-slate-400">
+              <span>Diupdate: {updatedAgo}</span>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-slate-400 hover:text-primary rounded-md p-1 hover:bg-slate-50 h-8 w-8"
-            >
-              <Edit2 className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-slate-400 hover:text-red-500 rounded-md p-1 hover:bg-slate-50 h-8 w-8"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
+
+          <div className="flex flex-col gap-2 shrink-0">
+            {onEdit && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onEdit}
+                className="text-gray-400 hover:text-blue-500 hover:bg-blue-50 h-8"
+              >
+                Edit
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onDelete}
+                className="text-gray-400 hover:text-red-500 hover:bg-red-50 h-8"
+              >
+                Hapus
+              </Button>
+            )}
           </div>
         </div>
-        <div className="text-sm text-slate-600 space-y-1">
-          <p>
-            <span className="font-medium text-slate-900">Reaksi:</span>{" "}
-            {reaction}
-          </p>
-          <p className="text-slate-500 italic">"{notes}"</p>
-        </div>
-        <div className="mt-2 text-xs text-slate-400">
-          Terakhir diperbarui: {lastUpdated}
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
+}
+
+function getTimeAgo(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return "Hari ini";
+  if (diffDays === 1) return "Kemarin";
+  if (diffDays < 7) return `${diffDays} hari yang lalu`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} minggu yang lalu`;
+  return `${Math.floor(diffDays / 30)} bulan yang lalu`;
 }

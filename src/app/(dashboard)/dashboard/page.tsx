@@ -14,17 +14,11 @@ export default function DashboardPage() {
         <DashboardHeader activePage="/dashboard" />
 
         {/* Main Content Area */}
-        <div className="flex flex-col lg:flex-row flex-1 bg-gray-50 overflow-hidden">
+        <div className="flex flex-col lg:flex-row flex-1 bg-gray-50 overflow-hidden pt-20">
           {/* Left: Main content */}
           <div className="flex-1 p-6 overflow-y-auto h-full lg:w-[65%] hide-scroll">
             {/* Breadcrumb */}
-            <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-              <span className="cursor-pointer hover:text-primary">Dasbor</span>
-              <span className="text-xs">›</span>
-              <span className="font-semibold text-gray-800">
-                Monitor Pertumbuhan
-              </span>
-            </div>
+            
 
             {/* Child Profile Card */}
             <ChildProfileCard />
