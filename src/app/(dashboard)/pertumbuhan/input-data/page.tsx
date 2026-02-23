@@ -18,24 +18,10 @@ export default function InputDataPage() {
     <div className="w-full max-w-screen bg-white shadow-2xl overflow-hidden border border-gray-200 min-h-screen flex flex-col">
       <DashboardHeader activePage="/pertumbuhan/input-data" />
 
-      <div className="flex flex-col lg:flex-row flex-1 bg-gray-50 overflow-hidden">
+      <div className="flex flex-col lg:flex-row flex-1 bg-gray-50 overflow-hidden pt-20">
         {/* Main Content Area */}
         <div className="flex-1 p-6 overflow-y-auto h-full lg:h-[calc(100vh-140px)] hide-scroll">
           
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-            <Link href="/dashboard" className="cursor-pointer hover:text-primary transition-colors">
-              Beranda
-            </Link>
-            <ChevronRight size={14} />
-            <Link href="/pertumbuhan" className="cursor-pointer hover:text-primary transition-colors">
-              Pertumbuhan
-            </Link>
-            <ChevronRight size={14} />
-            <span className="font-semibold text-gray-800">
-              Input Data Pertumbuhan
-            </span>
-          </div>
 
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-8">

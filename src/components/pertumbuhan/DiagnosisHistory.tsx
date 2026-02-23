@@ -147,6 +147,11 @@ export default function DiagnosisHistory() {
                               LILA: {record.pertumbuhan.lingkar_lengan_atas_cm}cm
                             </span>
                           )}
+                           {record.pertumbuhan.lingkar_kepala_cm && (
+                            <span>
+                              LK: {record.pertumbuhan.lingkar_kepala_cm}cm
+                            </span>
+                          )}
                         </>
                       )}
                     </div>

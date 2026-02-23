@@ -1,6 +1,7 @@
 // src/app/layout.tsx
 import { Nunito_Sans, Fredoka } from "next/font/google";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AnakProvider } from "@/contexts/AnakContext";
 import "./globals.css";
 
 const nunitoSans = Nunito_Sans({
@@ -37,7 +38,9 @@ export default function RootLayout({
         />
       </head>
       <body className={nunitoSans.className}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <AnakProvider>{children}</AnakProvider>
+        </AuthProvider>
       </body>
     </html>
   );
