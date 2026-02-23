@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pengaturan Reminder &amp; Jadwal Umum - NutriStunting</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13eca7",
+              "background-light": "#f6f8f7",
+              "background-dark": "#10221c",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-2 rounded-lg text-background-dark">
+<span class="material-symbols-outlined block text-2xl">child_care</span>
+</div>
+<h1 class="text-xl font-black tracking-tight uppercase">NutriStunting</h1>
+</div>
+<nav class="hidden md:flex items-center bg-slate-100 dark:bg-slate-800/50 p-1.5 rounded-full">
+<a class="px-5 py-2 text-sm font-semibold hover:text-primary transition-colors" href="#">Beranda</a>
+<a class="px-5 py-2 text-sm font-semibold hover:text-primary transition-colors" href="#">Pertumbuhan</a>
+<a class="px-5 py-2 text-sm font-semibold hover:text-primary transition-colors" href="#">Profile Anak</a>
+<a class="px-5 py-2 text-sm font-semibold hover:text-primary transition-colors" href="#">Rencana Makan</a>
+<a class="px-5 py-2 text-sm font-semibold hover:text-primary transition-colors" href="#">Alergi</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-primary/20 border-2 border-primary overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Professional woman portrait for user profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWP4Qz0QDWEc4CJshCN2kO5v1YIaFv5DEzjMbk-kWu4sBZku-S522nzVk1ROmQpGODOsaL3QIKHw8kXGi-GAxeOuSxO56A6DPb6DVEV-3XKgTiglNfQA7e2DyAj-515gLZbpe0TwVXPhem26r7lxf9oZi1ZChr-cducPgrvsVJ2kGmJ0qafaQ7G1Jegu0AZ9RbvjCSDSkuMubMpWsiMH7Wf5ASSeo7wqqts_9nCwLw3I7w1IQx6ceeHCfmGw26UNMZdpPOTmFzGdo"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 py-10">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+<div>
+<nav class="flex items-center gap-2 text-slate-500 text-sm mb-2">
+<span>Pengaturan</span>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="text-primary font-medium">Reminder &amp; Jadwal</span>
+</nav>
+<h2 class="text-4xl font-black tracking-tight text-slate-900 dark:text-white">Reminder &amp; Jadwal</h2>
+<p class="text-slate-500 dark:text-slate-400 mt-2 max-w-xl">Kelola jadwal makan, imunisasi, dan vitamin si kecil untuk memastikan kesehatan dan pertumbuhan yang optimal.</p>
+</div>
+<button class="flex items-center gap-2 bg-primary text-background-dark font-bold px-8 py-4 rounded-full shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+<span class="material-symbols-outlined">add_circle</span>
+<span>Tambah Pengingat</span>
+</button>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<div class="lg:col-span-8 space-y-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold text-lg flex items-center gap-2">
+                        Daftar Pengingat Aktif
+                        <span class="bg-primary/20 text-primary text-xs px-2 py-1 rounded-full">4 Jadwal</span>
+</h3>
+</div>
+<div class="group relative bg-white dark:bg-slate-900/50 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+<div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+<div class="h-16 w-16 flex items-center justify-center bg-orange-100 dark:bg-orange-900/30 text-orange-600 rounded-full shrink-0">
+<span class="material-symbols-outlined text-3xl">local_drink</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-3 mb-1">
+<span class="text-2xl font-black text-slate-900 dark:text-white">07:00 AM</span>
+<span class="bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-slate-500">Susu Pagi</span>
+</div>
+<p class="text-slate-600 dark:text-slate-400 italic">"Ayo Bunda, waktunya Adik minum susu!"</p>
+</div>
+<div class="flex items-center gap-4 sm:border-l border-slate-200 dark:border-slate-800 sm:pl-6 w-full sm:w-auto justify-between sm:justify-start mt-4 sm:mt-0">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-400 hover:text-blue-500 transition-colors">
+<span class="material-symbols-outlined">edit_square</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="group relative bg-white dark:bg-slate-900/50 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+<div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+<div class="h-16 w-16 flex items-center justify-center bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-full shrink-0">
+<span class="material-symbols-outlined text-3xl">vaccines</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-3 mb-1">
+<span class="text-2xl font-black text-slate-900 dark:text-white">09:00 AM</span>
+<span class="bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-200 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Imunisasi</span>
+</div>
+<h4 class="font-bold text-lg mb-0.5">DPT-HB-Hib 1</h4>
+<p class="text-slate-600 dark:text-slate-400 italic">"Waktunya imunisasi di Puskesmas, Bunda!"</p>
+</div>
+<div class="flex items-center gap-4 sm:border-l border-slate-200 dark:border-slate-800 sm:pl-6 w-full sm:w-auto justify-between sm:justify-start mt-4 sm:mt-0">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-400 hover:text-blue-500 transition-colors">
+<span class="material-symbols-outlined">edit_square</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="group relative bg-white dark:bg-slate-900/50 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+<div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+<div class="h-16 w-16 flex items-center justify-center bg-green-100 dark:bg-green-900/30 text-green-600 rounded-full shrink-0">
+<span class="material-symbols-outlined text-3xl">restaurant</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-3 mb-1">
+<span class="text-2xl font-black text-slate-900 dark:text-white">12:00 PM</span>
+<span class="bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-slate-500">Makan Siang</span>
+</div>
+<p class="text-slate-600 dark:text-slate-400 italic">"Waktunya asupan nutrisi lengkap!"</p>
+</div>
+<div class="flex items-center gap-4 sm:border-l border-slate-200 dark:border-slate-800 sm:pl-6 w-full sm:w-auto justify-between sm:justify-start mt-4 sm:mt-0">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-400 hover:text-blue-500 transition-colors">
+<span class="material-symbols-outlined">edit_square</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="group relative bg-white dark:bg-slate-900/50 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+<div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+<div class="h-16 w-16 flex items-center justify-center bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 rounded-full shrink-0">
+<span class="material-symbols-outlined text-3xl">medication</span>
+</div>
+<div class="flex-grow">
+<div class="flex items-center gap-3 mb-1">
+<span class="text-2xl font-black text-slate-900 dark:text-white">04:00 PM</span>
+<span class="bg-yellow-50 dark:bg-yellow-900/40 text-yellow-600 dark:text-yellow-200 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Vitamin</span>
+</div>
+<h4 class="font-bold text-lg mb-0.5">Vitamin A &amp; Zat Besi</h4>
+<p class="text-slate-600 dark:text-slate-400 italic">"Jangan lupa vitaminnya supaya kuat!"</p>
+</div>
+<div class="flex items-center gap-4 sm:border-l border-slate-200 dark:border-slate-800 sm:pl-6 w-full sm:w-auto justify-between sm:justify-start mt-4 sm:mt-0">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-400 hover:text-blue-500 transition-colors">
+<span class="material-symbols-outlined">edit_square</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-4">
+<div class="bg-white dark:bg-slate-900/50 rounded-xl border border-slate-200 dark:border-slate-800 p-8 sticky top-28">
+<h3 class="text-xl font-bold mb-8 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">event_note</span>
+                        Ringkasan Jadwal
+                    </h3>
+<div class="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-primary before:via-slate-200 dark:before:via-slate-800 before:to-transparent">
+<div class="relative flex items-start gap-6 group">
+<div class="absolute left-0 w-10 h-10 flex items-center justify-center rounded-full bg-primary text-background-dark shadow-lg shadow-primary/30 z-10 transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-sm font-bold">check</span>
+</div>
+<div class="pl-12">
+<time class="block text-xs font-bold text-primary uppercase tracking-widest mb-1">Selesai • 07:00</time>
+<h4 class="font-bold text-slate-900 dark:text-white">Susu Pagi</h4>
+<p class="text-sm text-slate-500">Nutrisi awal hari</p>
+</div>
+</div>
+<div class="relative flex items-start gap-6 group">
+<div class="absolute left-0 w-10 h-10 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900 border-2 border-blue-500 text-blue-600 z-10 transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-sm font-bold">vaccines</span>
+</div>
+<div class="pl-12">
+<time class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Mendatang • 09:00</time>
+<h4 class="font-bold text-slate-900 dark:text-white">Imunisasi DPT</h4>
+<p class="text-sm text-slate-500">Puskesmas Melati</p>
+</div>
+</div>
+<div class="relative flex items-start gap-6 group">
+<div class="absolute left-0 w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 border-2 border-primary text-primary z-10 transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-sm font-bold">restaurant</span>
+</div>
+<div class="pl-12">
+<time class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Nanti • 12:00</time>
+<h4 class="font-bold text-slate-900 dark:text-white">Makan Siang</h4>
+<p class="text-sm text-slate-500">Menu 4 Bintang</p>
+</div>
+</div>
+<div class="relative flex items-start gap-6 group">
+<div class="absolute left-0 w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-400 z-10 transition-transform group-hover:scale-110">
+<span class="material-symbols-outlined text-sm font-bold">medication</span>
+</div>
+<div class="pl-12">
+<time class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Nanti • 16:00</time>
+<h4 class="font-bold text-slate-900 dark:text-white">Vitamin Sore</h4>
+<p class="text-sm text-slate-500">Vitamin A &amp; Zat Besi</p>
+</div>
+</div>
+</div>
+<div class="mt-10 p-4 bg-primary/10 rounded-xl border border-primary/20">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-primary">lightbulb</span>
+<span class="text-sm font-bold text-slate-800 dark:text-slate-200">Tips Sehat</span>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Pastikan jadwal imunisasi sesuai dengan buku KIA agar kekebalan tubuh anak terbentuk sempurna.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="max-w-7xl mx-auto px-6 py-12 border-t border-slate-200 dark:border-slate-800 mt-20">
+<div class="flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-3 opacity-50">
+<div class="bg-slate-400 p-1.5 rounded-lg text-white">
+<span class="material-symbols-outlined block text-xl">child_care</span>
+</div>
+<h1 class="text-lg font-black tracking-tight uppercase">NutriStunting</h1>
+</div>
+<p class="text-slate-500 text-sm">© 2024 NutriStunting. Membantu tumbuh kembang optimal anak Indonesia.</p>
+<div class="flex gap-6">
+<a class="text-slate-400 hover:text-primary transition-colors text-sm" href="#">Kebijakan Privasi</a>
+<a class="text-slate-400 hover:text-primary transition-colors text-sm" href="#">Bantuan</a>
+</div>
+</div>
+</footer>
+
+</body></html>

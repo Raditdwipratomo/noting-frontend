@@ -14,6 +14,7 @@ export interface DiagnosaResponseData {
     berat_badan_kg: string;
     tinggi_badan_cm: string;
     lingkar_lengan_atas_cm: string;
+    lingkar_kepala_cm: string;
   };
 }
 

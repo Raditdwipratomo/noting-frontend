@@ -22,6 +22,7 @@ const navItems = [
   { label: "Rencana Makan", icon: UtensilsCrossed, href: "/rencana-makan" },
   { label: "Profile Anak", icon: Baby, href: "/profile-anak" },
   { label: "Alergi", icon: ShieldAlert, href: "/alergi" },
+  { label: "Reminder", icon: Bell, href: "/reminders" },
 ];
 
 interface DashboardHeaderProps {
